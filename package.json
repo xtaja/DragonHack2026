@@ -1,0 +1,12 @@
+{
+  "name": "dragonhack2026",
+  "version": "1.0.0",
+  "description": "Tinder for food. Swipe through dishes until you find what you want to eat.",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm run dev --prefix backend\" \"npm run dev --prefix dragonhack26-app\"",
+    "dev:host": "concurrently -n backend,frontend -c blue,green \"npm run dev --prefix backend\" \"npm run dev --prefix dragonhack26-app -- -- --host\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

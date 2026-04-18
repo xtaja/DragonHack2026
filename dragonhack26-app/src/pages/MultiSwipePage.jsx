@@ -33,12 +33,6 @@ export default function MultiSwipePage() {
       const food = multiplayerFoods.find(f => f.id === foodId)
       if (!food) return
       setMatchBanner(food)
-      setTimeout(() => {
-        setLikedFood(food)
-        socket.disconnect()
-        clearRoom()
-        navigate('/result')
-      }, 2200)
     })
 
     return () => {
@@ -56,25 +50,61 @@ export default function MultiSwipePage() {
     setStack(s => s.slice(0, -1))
   }
 
-  // ── Match banner ───────────────────────────────────────────
+  // ── Match screen ───────────────────────────────────────────
   if (matchBanner) {
+    function handleContinue() {
+      setLikedFood(matchBanner)
+      socket.disconnect()
+      clearRoom()
+      navigate('/result')
+    }
+
     return (
       <motion.div
-        className="swipe-page swipe-page--center"
-        initial={{ opacity: 0, scale: 0.9 }}
+        className="result-page"
+        initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.35 }}
       >
-        <div style={{ fontSize: 64 }}>🎉</div>
-        <h2 style={{ color: 'var(--text-h)', margin: '12px 0 4px', fontSize: '1.8rem' }}>It's a Match!</h2>
-        <p style={{ color: 'var(--text)', marginBottom: 16 }}>Everyone picked the same food!</p>
-        <img
-          src={matchBanner.image}
-          alt={matchBanner.name}
-          style={{ width: 220, height: 160, objectFit: 'cover', borderRadius: 16, boxShadow: 'var(--shadow)' }}
-        />
-        <p style={{ fontWeight: 700, fontSize: '1.2rem', color: 'var(--text-h)', marginTop: 12 }}>
-          {matchBanner.name}
-        </p>
+        <div className="result-card">
+          <div className="result-match-badge">🎉 It's a Match!</div>
+
+          <img src={matchBanner.image} alt={matchBanner.name} className="result-img" />
+
+          <div className="result-info">
+            <div className="swipe-card__tags" style={{ justifyContent: 'center', marginBottom: 8 }}>
+              <span className="swipe-tag">{matchBanner.category}</span>
+              {matchBanner.area && <span className="swipe-tag swipe-tag--muted">{matchBanner.area}</span>}
+            </div>
+            <h1 className="result-name">{matchBanner.name}</h1>
+            {matchBanner.ingredients.length > 0 && (
+              <p className="result-ingredients">
+                {matchBanner.ingredients.slice(0, 5).map(i => i.name).join(', ')}
+                {matchBanner.ingredients.length > 5 ? ` +${matchBanner.ingredients.length - 5} more` : ''}
+              </p>
+            )}
+          </div>
+
+          <div className="result-links">
+            {matchBanner.recipeUrl && (
+              <a href={matchBanner.recipeUrl} target="_blank" rel="noopener noreferrer" className="result-link-btn result-link-btn--primary">
+                📖 View Full Recipe
+              </a>
+            )}
+            {matchBanner.youtubeUrl && (
+              <a href={matchBanner.youtubeUrl} target="_blank" rel="noopener noreferrer" className="result-link-btn result-link-btn--yt">
+                ▶ Watch on YouTube
+              </a>
+            )}
+            {!matchBanner.recipeUrl && !matchBanner.youtubeUrl && (
+              <p style={{ color: 'var(--text)', fontSize: '0.9rem' }}>No recipe link available.</p>
+            )}
+          </div>
+
+          <button className="setup-cta" onClick={handleContinue}>
+            Done →
+          </button>
+        </div>
       </motion.div>
     )
   }
