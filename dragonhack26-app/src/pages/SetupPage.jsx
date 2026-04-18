@@ -4,24 +4,43 @@ import { motion } from 'framer-motion'
 import PreferenceChip from '../components/PreferenceChip'
 import useAppStore from '../store/useAppStore'
 
-const PREFERENCES = [
-  { label: 'Sweet', emoji: '🍬' },
-  { label: 'Savory', emoji: '🧂' },
-  { label: 'Breakfast', emoji: '🍳' },
-  { label: 'Snack', emoji: '🍿' },
-  { label: 'Healthy', emoji: '🥗' },
-  { label: 'Asian', emoji: '🍜' },
-  { label: 'Seafood', emoji: '🦞' },
-  { label: 'Pasta', emoji: '🍝' },
+const PREFERENCE_GROUPS = [
+  {
+    label: 'Taste',
+    options: [
+      { label: 'Sweet',  emoji: '🍬' },
+      { label: 'Savory', emoji: '🧂' },
+      { label: 'Spicy',  emoji: '🌶️' },
+    ],
+  },
+  {
+    label: 'Dish Type',
+    options: [
+      { label: 'Pasta',   emoji: '🍝' },
+      { label: 'Soup',    emoji: '🍲' },
+      { label: 'Salad',   emoji: '🥗' },
+      { label: 'Seafood', emoji: '🦞' },
+    ],
+  },
+  {
+    label: 'Cuisine',
+    options: [
+      { label: 'Italian', emoji: '🇮🇹' },
+      { label: 'Chinese', emoji: '🇨🇳' },
+      { label: 'French',  emoji: '🇫🇷' },
+      { label: 'Mexican', emoji: '🌮' },
+      { label: 'Indian',  emoji: '🇮🇳' },
+    ],
+  },
 ]
 
 const RESTRICTIONS = [
-  { label: 'Vegan', emoji: '🌱' },
-  { label: 'Vegetarian', emoji: '🥦' },
-  { label: 'Gluten-free', emoji: '🌾' },
-  { label: 'Nut Allergy', emoji: '🥜' },
+  { label: 'Vegan',        emoji: '🌱' },
+  { label: 'Vegetarian',   emoji: '🥦' },
+  { label: 'Gluten-free',  emoji: '🌾' },
+  { label: 'Nut Allergy',  emoji: '🥜' },
   { label: 'Lactose-free', emoji: '🥛' },
-  { label: 'Halal', emoji: '☪️' },
+  { label: 'Halal',        emoji: '☪️' },
 ]
 
 export default function SetupPage() {
@@ -36,18 +55,12 @@ export default function SetupPage() {
   function handleDislikeAdd(e) {
     if (e.key === 'Enter' || e.type === 'click') {
       const val = dislikeInput.trim().toLowerCase()
-      if (val) {
-        addDislike(val)
-        setDislikeInput('')
-      }
+      if (val) { addDislike(val); setDislikeInput('') }
     }
   }
 
   function handleContinue() {
-    if (!username.trim()) {
-      setError('Please enter a username to continue.')
-      return
-    }
+    if (!username.trim()) { setError('Please enter a username to continue.'); return }
     navigate('/mode')
   }
 
@@ -82,21 +95,28 @@ export default function SetupPage() {
           {error && <p className="setup-error">{error}</p>}
         </section>
 
-        {/* Preferences */}
+        {/* Preferences — 3 grouped sections */}
         <section className="setup-section">
           <label className="setup-label">
             Preferences <span className="optional">(optional)</span>
           </label>
-          <p className="setup-hint">What are you in the mood for?</p>
-          <div className="chip-group">
-            {PREFERENCES.map((p) => (
-              <PreferenceChip
-                key={p.label}
-                label={p.label}
-                emoji={p.emoji}
-                selected={preferences.includes(p.label)}
-                onClick={() => togglePreference(p.label)}
-              />
+          <p className="setup-hint">What are you in the mood for? Pick from any category.</p>
+          <div className="pref-groups">
+            {PREFERENCE_GROUPS.map((group) => (
+              <div key={group.label} className="pref-group">
+                <span className="pref-group-label">{group.label}</span>
+                <div className="chip-group">
+                  {group.options.map((p) => (
+                    <PreferenceChip
+                      key={p.label}
+                      label={p.label}
+                      emoji={p.emoji}
+                      selected={preferences.includes(p.label)}
+                      onClick={() => togglePreference(p.label)}
+                    />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </section>
@@ -135,24 +155,14 @@ export default function SetupPage() {
               onChange={(e) => setDislikeInput(e.target.value)}
               onKeyDown={handleDislikeAdd}
             />
-            <button
-              type="button"
-              className="dislike-add-btn"
-              onClick={handleDislikeAdd}
-              disabled={!dislikeInput.trim()}
-            >
+            <button type="button" className="dislike-add-btn" onClick={handleDislikeAdd} disabled={!dislikeInput.trim()}>
               Add
             </button>
           </div>
           {dislikes.length > 0 && (
             <div className="chip-group chip-group--mt">
               {dislikes.map((d) => (
-                <button
-                  key={d}
-                  type="button"
-                  className="chip chip--dislike"
-                  onClick={() => removeDislike(d)}
-                >
+                <button key={d} type="button" className="chip chip--dislike" onClick={() => removeDislike(d)}>
                   {d} ✕
                 </button>
               ))}

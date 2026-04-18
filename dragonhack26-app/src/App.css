@@ -782,3 +782,120 @@ button { cursor: pointer; }
   padding: 0 24px 6px;
   flex-shrink: 0;
 }
+
+/* ── Preference groups ────────────────────────────────────── */
+.pref-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pref-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pref-group-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text);
+}
+
+/* ── Nearby restaurants ───────────────────────────────────── */
+.nearby-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.5px dashed var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 600;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.nearby-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.nearby-loading {
+  text-align: center;
+  color: var(--text);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.nearby-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nearby-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0 0 4px;
+}
+
+.nearby-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.nearby-row:hover {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.nearby-row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nearby-row__name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-h);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nearby-row__address {
+  font-size: 0.78rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nearby-row__distance {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.result-link-btn--maps {
+  background: #1a73e8;
+  color: #fff;
+}
+.result-link-btn--maps:hover { opacity: 0.88; }
