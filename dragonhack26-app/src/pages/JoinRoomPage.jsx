@@ -1,15 +1,23 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { socket } from '../lib/socket'
 import useAppStore from '../store/useAppStore'
 
 export default function JoinRoomPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const username = useAppStore(s => s.username)
   const { setRoom, setRoomMembers, setMultiplayerFoods } = useAppStore()
 
-  const [code, setCode] = useState('')
+  const codeFromUrl = searchParams.get('code') || ''
+  const [code, setCode] = useState(codeFromUrl)
+
+  // Redirect to setup if no username, preserving this page as destination
+  if (!username.trim()) {
+    const next = codeFromUrl ? `/room/join?code=${codeFromUrl}` : '/room/join'
+    return <Navigate to={`/?next=${encodeURIComponent(next)}`} replace />
+  }
   const [joined, setJoined] = useState(false)
   const [roomCode, setRoomCode] = useState(null)
   const [members, setMembers] = useState([])
@@ -144,7 +152,20 @@ export default function JoinRoomPage() {
               Join
             </button>
           </div>
-          {error && <p className="setup-error">{error}</p>}
+          {error && (
+            <div>
+              <p className="setup-error">{error}</p>
+              {error.includes('already taken') && (
+                <button
+                  className="setup-back"
+                  style={{ marginTop: 8 }}
+                  onClick={() => navigate(`/?next=${encodeURIComponent(`/room/join?code=${code}`)}`)}
+                >
+                  ← Change username
+                </button>
+              )}
+            </div>
+          )}
         </section>
 
         <button className="setup-back" onClick={handleLeave} style={{ alignSelf: 'center' }}>

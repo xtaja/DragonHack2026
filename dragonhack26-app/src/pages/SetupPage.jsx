@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import PreferenceChip from '../components/PreferenceChip'
 import useAppStore from '../store/useAppStore'
@@ -45,6 +45,7 @@ const RESTRICTIONS = [
 
 export default function SetupPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { username, preferences, restrictions, dislikes,
           setUsername, togglePreference, toggleRestriction,
           addDislike, removeDislike } = useAppStore()
@@ -61,7 +62,7 @@ export default function SetupPage() {
 
   function handleContinue() {
     if (!username.trim()) { setError('Please enter a username to continue.'); return }
-    navigate('/mode')
+    navigate(searchParams.get('next') || '/mode')
   }
 
   return (

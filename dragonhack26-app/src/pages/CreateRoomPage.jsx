@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { QRCodeSVG } from 'qrcode.react'
 import { socket } from '../lib/socket'
 import { useFoodData } from '../hooks/useFoodData'
 import useAppStore from '../store/useAppStore'
@@ -8,12 +9,16 @@ import useAppStore from '../store/useAppStore'
 export default function CreateRoomPage() {
   const navigate = useNavigate()
   const username = useAppStore(s => s.username)
+
+  if (!username.trim()) {
+    return <Navigate to="/?next=%2Froom%2Fcreate" replace />
+  }
   const { setRoom, setRoomMembers, setMultiplayerFoods } = useAppStore()
 
   const [roomCode, setRoomCode] = useState(null)
   const [members, setMembers] = useState([])
   const [error, setError] = useState(null)
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState(false)  // 'code' | 'link' | false
   const didCreate = useRef(false)
 
   // Prefetch foods while the lobby is open so start is instant
@@ -60,9 +65,20 @@ export default function CreateRoomPage() {
     }
   }, [])
 
-  function handleCopy() {
+  const joinLink = roomCode
+    ? `${window.location.origin}/room/join?code=${roomCode}`
+    : ''
+
+  function handleCopyCode() {
     navigator.clipboard.writeText(roomCode).then(() => {
-      setCopied(true)
+      setCopied('code')
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  function handleCopyLink() {
+    navigator.clipboard.writeText(joinLink).then(() => {
+      setCopied('link')
       setTimeout(() => setCopied(false), 2000)
     })
   }
@@ -97,12 +113,23 @@ export default function CreateRoomPage() {
         <section className="setup-section">
           <label className="setup-label">Room Code</label>
           {roomCode ? (
-            <div className="room-code-row">
-              <span className="room-code">{roomCode}</span>
-              <button className="dislike-add-btn" onClick={handleCopy}>
-                {copied ? '✓ Copied' : 'Copy'}
-              </button>
-            </div>
+            <>
+              <div className="room-code-row">
+                <span className="room-code">{roomCode}</span>
+                <button className="dislike-add-btn" onClick={handleCopyCode}>
+                  {copied === 'code' ? '✓ Copied' : 'Copy code'}
+                </button>
+              </div>
+              <div className="room-link-row">
+                <span className="room-link">{joinLink}</span>
+                <button className="dislike-add-btn" onClick={handleCopyLink}>
+                  {copied === 'link' ? '✓ Copied' : 'Copy link'}
+                </button>
+              </div>
+              <div className="room-qr">
+                <QRCodeSVG value={joinLink} size={160} includeMargin />
+              </div>
+            </>
           ) : (
             <p className="setup-hint">Creating room…</p>
           )}

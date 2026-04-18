@@ -31,6 +31,15 @@ export function setupRoomHandler(io) {
       if (!room) { socket.emit('room-error', { message: 'Room not found.' }); return }
       if (room.status !== 'waiting') { socket.emit('room-error', { message: 'Game already started.' }); return }
 
+      const taken = [...room.members.values()].some(
+        m => m.username.trim().toLowerCase() === username.trim().toLowerCase()
+      )
+      if (taken) {
+        console.log(`[room ${roomCode}] Rejected duplicate username: "${username}"`)
+        socket.emit('room-error', { message: `Username "${username}" is already taken. Please go back and choose a different name.` })
+        return
+      }
+
       room.members.set(socket.id, { username })
       socket.join(roomCode)
       const members = memberList(room)

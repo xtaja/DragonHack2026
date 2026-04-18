@@ -899,3 +899,36 @@ button { cursor: pointer; }
   color: #fff;
 }
 .result-link-btn--maps:hover { opacity: 0.88; }
+
+/* ── Room invite link ─────────────────────────────────────── */
+.room-link-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+}
+
+.room-link {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── QR code ──────────────────────────────────────────────── */
+.room-qr {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+}
+
+.room-qr svg {
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
