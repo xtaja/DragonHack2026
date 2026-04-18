@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import useAppStore from '../store/useAppStore'
+import NearbyRestaurants from '../components/NearbyRestaurants'
 
 export default function ResultPage() {
   const navigate = useNavigate()
@@ -63,6 +64,8 @@ export default function ResultPage() {
             <p style={{ color: 'var(--text)', fontSize: '0.9rem' }}>No recipe link available.</p>
           )}
         </div>
+
+        <NearbyRestaurants foodName={food.name} category={food.area || food.category} />
 
         <button className="setup-back" onClick={() => navigate('/swipe')}>
           ← Keep swiping

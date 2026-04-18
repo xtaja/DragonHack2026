@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import SwipeCard from '../components/SwipeCard'
 import FoodDetail from '../components/FoodDetail'
+import NearbyRestaurants from '../components/NearbyRestaurants'
 import { socket } from '../lib/socket'
 import useAppStore from '../store/useAppStore'
 
@@ -100,6 +101,8 @@ export default function MultiSwipePage() {
               <p style={{ color: 'var(--text)', fontSize: '0.9rem' }}>No recipe link available.</p>
             )}
           </div>
+
+          <NearbyRestaurants foodName={matchBanner.name} category={matchBanner.area || matchBanner.category} />
 
           <button className="setup-cta" onClick={handleContinue}>
             Done →

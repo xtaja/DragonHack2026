@@ -3,17 +3,69 @@ import useAppStore from '../store/useAppStore'
 import { fetchMealsByCategory, fetchMealsByArea, fetchMealDetail } from '../lib/api'
 
 const PREF_TO_CATEGORIES = {
-  Sweet:     ['Dessert'],
-  Savory:    ['Beef', 'Chicken', 'Pork', 'Lamb'],
-  Breakfast: ['Breakfast'],
-  Snack:     ['Starter', 'Side'],
-  Healthy:   ['Vegetarian', 'Vegan'],
-  Seafood:   ['Seafood'],
-  Pasta:     ['Pasta'],
+  // Taste
+  Sweet:   ['Dessert'],
+  Savory:  ['Beef', 'Chicken', 'Pork', 'Lamb'],
+  Spicy:   [],                              // handled via areas
+
+  // Dish type
+  Pasta:   ['Pasta'],
+  Soup:    ['Miscellaneous'],
+  Salad:   ['Side', 'Vegetarian'],
+  Seafood: ['Seafood'],
+
+  // Cuisine — handled via areas
+  Italian: [],
+  Chinese: [],
+  French:  [],
+  Mexican: [],
+  Indian:  [],
 }
 
 const PREF_TO_AREAS = {
-  Asian: ['Japanese', 'Chinese', 'Thai', 'Indian', 'Malaysian'],
+  Spicy:   ['Indian', 'Mexican', 'Moroccan', 'Thai'],
+  Italian: ['Italian'],
+  Chinese: ['Chinese'],
+  French:  ['French'],
+  Mexican: ['Mexican'],
+  Indian:  ['Indian'],
+}
+
+// Keywords to exclude per dietary restriction — matched against ingredient names
+// When a restriction is active, also pull from these categories to ensure enough results
+const RESTRICTION_TO_CATEGORIES = {
+  Vegan:       ['Vegan', 'Vegetarian'],
+  Vegetarian:  ['Vegetarian', 'Vegan'],
+}
+
+const RESTRICTION_INGREDIENTS = {
+  Vegan: [
+    'chicken', 'beef', 'pork', 'lamb', 'turkey', 'duck', 'bacon', 'ham',
+    'salmon', 'tuna', 'shrimp', 'prawn', 'fish', 'anchovy', 'sardine',
+    'egg', 'milk', 'cream', 'butter', 'cheese', 'yogurt', 'honey',
+    'sausage', 'lard', 'mince', 'gelatin',
+  ],
+  Vegetarian: [
+    'chicken', 'beef', 'pork', 'lamb', 'turkey', 'duck', 'bacon', 'ham',
+    'salmon', 'tuna', 'shrimp', 'prawn', 'fish', 'anchovy', 'sardine',
+    'sausage', 'lard', 'mince', 'gelatin',
+  ],
+  'Gluten-free': [
+    'flour', 'bread', 'breadcrumb', 'pasta', 'wheat', 'barley', 'rye',
+    'soy sauce', 'couscous', 'semolina', 'beer', 'malt',
+  ],
+  'Nut Allergy': [
+    'peanut', 'almond', 'cashew', 'walnut', 'pecan', 'pistachio',
+    'hazelnut', 'macadamia', 'pine nut', 'chestnut',
+  ],
+  'Lactose-free': [
+    'milk', 'cream', 'butter', 'cheese', 'yogurt', 'parmesan',
+    'mozzarella', 'cheddar', 'brie', 'feta', 'mascarpone', 'ricotta',
+    'sour cream',
+  ],
+  Halal: [
+    'pork', 'bacon', 'ham', 'lard', 'prosciutto', 'pancetta',
+  ],
 }
 
 const DEFAULT_CATEGORIES = ['Chicken', 'Beef', 'Pasta', 'Seafood', 'Dessert']
@@ -52,7 +104,7 @@ export function useFoodData() {
   const [foods, setFoods] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const { preferences, dislikes } = useAppStore()
+  const { preferences, restrictions, dislikes } = useAppStore()
 
   useEffect(() => {
     let cancelled = false
@@ -74,6 +126,11 @@ export function useFoodData() {
           }
         }
 
+        // Boost fetch pool with restriction-friendly categories
+        restrictions.forEach(r => {
+          ;(RESTRICTION_TO_CATEGORIES[r] || []).forEach(c => categories.add(c))
+        })
+
         const lists = await Promise.all([
           ...[...categories].map(c => fetchMealsByCategory(c)),
           ...[...areas].map(a => fetchMealsByArea(a)),
@@ -86,7 +143,7 @@ export function useFoodData() {
           if (!seen.has(m.idMeal)) { seen.add(m.idMeal); combined.push(m) }
         })
 
-        const sample = shuffle(combined).slice(0, 20)
+        const sample = shuffle(combined).slice(0, 40)
         const details = await Promise.all(sample.map(m => fetchMealDetail(m.idMeal)))
         if (cancelled) return
 
@@ -94,9 +151,28 @@ export function useFoodData() {
           .filter(Boolean)
           .map(transformMeal)
           .filter(food => {
-            if (!dislikes.length) return true
-            const ingredientStr = food.ingredients.map(i => i.name.toLowerCase()).join(' ')
-            return !dislikes.some(d => ingredientStr.includes(d.toLowerCase()))
+            const ingredientWords = food.ingredients
+              .map(i => i.name.toLowerCase())
+
+            // Word-level match: splits ingredient name into words so "egg"
+            // doesn't match "eggplant", but multi-word keywords like "soy sauce" still work
+            function matches(ingredientName, keyword) {
+              if (keyword.includes(' ')) return ingredientName.includes(keyword)
+              return ingredientName.split(/\s+/).some(w => w === keyword)
+            }
+
+            // Dislikes — substring match (user knows what they typed)
+            if (dislikes.some(d =>
+              ingredientWords.some(ing => ing.includes(d.toLowerCase()))
+            )) return false
+
+            // Restrictions — word-level match
+            for (const restriction of restrictions) {
+              const blocked = RESTRICTION_INGREDIENTS[restriction] || []
+              if (ingredientWords.some(ing => blocked.some(b => matches(ing, b)))) return false
+            }
+
+            return true
           })
 
         setFoods(transformed)
