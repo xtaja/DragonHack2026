@@ -117,9 +117,13 @@ function applyFilters(foods, restrictions, dislikes) {
   })
 }
 
-// Standalone async function — callable outside React (e.g. play-again button)
-export async function fetchFoods() {
-  const { preferences, restrictions, dislikes } = useAppStore.getState()
+// Standalone async function — callable outside React (e.g. play-again, multiplayer start)
+// Pass merged params explicitly; falls back to the current user's store values.
+export async function fetchFoods(params) {
+  const store = useAppStore.getState()
+  const preferences = params?.preferences ?? store.preferences
+  const restrictions = params?.restrictions ?? store.restrictions
+  const dislikes     = params?.dislikes     ?? store.dislikes
   const categories = new Set()
   const areas = new Set()
 

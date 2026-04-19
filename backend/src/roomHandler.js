@@ -6,7 +6,12 @@ function generateCode() {
 }
 
 function memberList(room) {
-  return [...room.members.values()].map(m => ({ username: m.username }))
+  return [...room.members.values()].map(m => ({
+    username: m.username,
+    preferences: m.preferences,
+    restrictions: m.restrictions,
+    dislikes: m.dislikes,
+  }))
 }
 
 function buildScores(room) {
@@ -25,22 +30,22 @@ function checkGameOver(io, roomCode, room) {
 export function setupRoomHandler(io) {
   io.on('connection', (socket) => {
 
-    socket.on('create-room', ({ username }) => {
+    socket.on('create-room', ({ username, preferences = [], restrictions = [], dislikes = [] }) => {
       const code = generateCode()
       rooms.set(code, {
         code,
         host: socket.id,
-        members: new Map([[socket.id, { username }]]),
+        members: new Map([[socket.id, { username, preferences, restrictions, dislikes }]]),
         foods: null,
         swipes: new Map(),
         donePlayers: new Set(),
         status: 'waiting',
       })
       socket.join(code)
-      socket.emit('room-created', { code, members: [{ username }], isHost: true })
+      socket.emit('room-created', { code, members: memberList(rooms.get(code)), isHost: true })
     })
 
-    socket.on('join-room', ({ roomCode, username }) => {
+    socket.on('join-room', ({ roomCode, username, preferences = [], restrictions = [], dislikes = [] }) => {
       const room = rooms.get(roomCode)
       if (!room) { socket.emit('room-error', { message: 'Room not found.' }); return }
       if (room.status !== 'waiting') { socket.emit('room-error', { message: 'Game already started.' }); return }
@@ -54,7 +59,7 @@ export function setupRoomHandler(io) {
         return
       }
 
-      room.members.set(socket.id, { username })
+      room.members.set(socket.id, { username, preferences, restrictions, dislikes })
       socket.join(roomCode)
       const members = memberList(room)
       socket.emit('room-joined', { code: roomCode, members, isHost: false })
