@@ -1084,3 +1084,22 @@ button { cursor: pointer; }
   object-fit: cover;
   border-radius: 10px;
 }
+
+/* ── Global home button ───────────────────────────────────── */
+.home-btn {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 200;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  transition: transform 0.15s;
+}
+
+.home-btn:hover { transform: scale(1.2); }
+
+@media (min-width: 768px) {
+  .home-btn { font-size: 1.9rem; }
+}
