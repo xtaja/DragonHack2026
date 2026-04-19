@@ -23,8 +23,9 @@ import {
   GiNoodles,
   GiTacos,
 } from 'react-icons/gi'
+import { LuCandy, LuSalad, LuFish} from 'react-icons/lu'
 import { MdRamenDining } from 'react-icons/md'
-import { TbWheat, TbMilk, TbNut } from 'react-icons/tb'
+import { TbSalt, TbPepper, TbWheat, TbSoup, TbMilk, TbNut } from 'react-icons/tb'
 import PreferenceChip from '../components/PreferenceChip'
 import useAppStore from '../store/useAppStore'
 
@@ -32,18 +33,18 @@ const PREFERENCE_GROUPS = [
   {
     label: 'Taste',
     options: [
-      { label: 'Sweet', Icon: FaCakeCandles },
-      { label: 'Savory', Icon: FaUtensils },
-      { label: 'Spicy', Icon: FaPepperHot },
+      { label: 'Sweet', Icon: LuCandy},
+      { label: 'Savory', Icon: TbSalt },
+      { label: 'Spicy', Icon: TbPepper},
     ],
   },
   {
     label: 'Dish Type',
     options: [
       { label: 'Pasta', Icon: GiNoodles },
-      { label: 'Soup', Icon: GiCampCookingPot },
-      { label: 'Salad', Icon: GiTomato },
-      { label: 'Seafood', Icon: FaFish },
+      { label: 'Soup', Icon: TbSoup },
+      { label: 'Salad', Icon: LuSalad },
+      { label: 'Seafood', Icon: LuFish },
     ],
   },
   {
