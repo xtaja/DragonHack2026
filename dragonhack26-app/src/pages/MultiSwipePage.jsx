@@ -268,9 +268,9 @@ export default function MultiSwipePage() {
     return (
       <div className="swipe-page swipe-page--center">
         <div className="swipe-spinner" style={{ fontSize: '3rem' }}>⏳</div>
-        <h2 style={{ color: 'var(--text-h)', margin: '12px 0 4px' }}>You're done!</h2>
-        <p style={{ color: 'var(--text)' }}>Waiting for the others to finish…</p>
-        <button className="setup-back" style={{ marginTop: 24 }} onClick={handleLeave}>← Leave</button>
+        <h2 style={{ color: '#fff', margin: '12px 0 4px' }}>You're done!</h2>
+        <p style={{ color: 'rgba(255,255,255,0.8)' }}>Waiting for the others to finish…</p>
+        <button className="setup-back" style={{ marginTop: 24, color: '#fff' }} onClick={handleLeave}>← Leave</button>
       </div>
     )
   }
