@@ -1,6 +1,7 @@
 # Tindish 🍽️
 
 Tinder for food. Swipe through dishes until you find what you want to eat — solo or with friends.
+Hosted on https://tindish.onrender.com/
 
 ---
 
