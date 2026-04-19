@@ -28,22 +28,6 @@ cd ../dragonhack26-app && npm install
 
 ---
 
-### Option B — npm (single terminal, cross-platform)
-Run in both directories, backend and dragonhack26-app
-
-**Local only:**
-```bash
-npm run dev
-```
-
-> For LAN mode, also create `dragonhack26-app/.env.local` with:
-> ```
-> VITE_SOCKET_URL=http://<your-local-ip>:3001
-> ```
-> Find your IP with `ipconfig` (Windows) or `ifconfig` (Mac/Linux) — look for the IPv4 address under Wi-Fi.
-
----
-
 ### Running servers separately (manual)
 
 ```bash
@@ -71,17 +55,3 @@ cd dragonhack26-app && npm run dev
 | `↑` or `K` | Details |
 | `Esc` | Close details |
 
----
-
-## Stack
-
-| Layer | Tech |
-|-------|------|
-| Frontend | React 19 + Vite |
-| Animations | Framer Motion |
-| State | Zustand |
-| Routing | React Router |
-| Backend | Node.js + Express |
-| Real-time | Socket.io |
-| Food data | [TheMealDB](https://www.themealdb.com) (free, no API key) |
-| Restaurant search | OpenStreetMap Overpass / Google Maps |
