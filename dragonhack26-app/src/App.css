@@ -1016,3 +1016,71 @@ button { cursor: pointer; }
   max-width: 560px;
   margin: 0 auto;
 }
+
+.leaderboard-choose {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+
+.leaderboard-choose:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Leaderboard accordion ────────────────────────────────── */
+.leaderboard-item {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.leaderboard-row--clickable {
+  width: 100%;
+  background: var(--code-bg);
+  border: none;
+  border-radius: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.leaderboard-row--clickable:hover {
+  background: var(--accent-bg);
+}
+
+.leaderboard-row--open {
+  background: var(--accent-bg);
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.leaderboard-chevron {
+  font-size: 0.7rem;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.leaderboard-detail {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg);
+}
+
+.leaderboard-detail-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}

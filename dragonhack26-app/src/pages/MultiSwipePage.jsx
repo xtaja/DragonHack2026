@@ -20,6 +20,7 @@ export default function MultiSwipePage() {
   const [waiting, setWaiting] = useState(false)
   const [scores, setScores] = useState(null)
   const [fetchingNextRound, setFetchingNextRound] = useState(false)
+  const [expandedId, setExpandedId] = useState(null)
 
   const doneSent = useRef(false)
   const topFood = stack[stack.length - 1]
@@ -161,20 +162,59 @@ export default function MultiSwipePage() {
             <p style={{ textAlign: 'center', color: 'var(--text)' }}>Nobody liked anything 😅</p>
           ) : (
             <ul className="leaderboard">
-              {rankedFoods.map((food, i) => (
-                <li key={food.id} className="leaderboard-row">
-                  <span className="leaderboard-rank">{i < 3 ? MEDALS[i] : `#${i + 1}`}</span>
-                  <img src={food.image} alt={food.name} className="leaderboard-thumb" />
-                  <div className="leaderboard-info">
-                    <span className="leaderboard-name">{food.name}</span>
-                    <span className="leaderboard-category">{food.category}{food.area ? ` · ${food.area}` : ''}</span>
-                  </div>
-                  <div className="leaderboard-likes">
-                    <span className="leaderboard-count">{food.count}</span>
-                    <span className="leaderboard-label">like{food.count !== 1 ? 's' : ''}</span>
-                  </div>
-                </li>
-              ))}
+              {rankedFoods.map((food, i) => {
+                const isOpen = expandedId === food.id
+                return (
+                  <li key={food.id} className="leaderboard-item">
+                    <button
+                      className={`leaderboard-row leaderboard-row--clickable ${isOpen ? 'leaderboard-row--open' : ''}`}
+                      onClick={() => setExpandedId(isOpen ? null : food.id)}
+                    >
+                      <span className="leaderboard-rank">{i < 3 ? MEDALS[i] : `#${i + 1}`}</span>
+                      <img src={food.image} alt={food.name} className="leaderboard-thumb" />
+                      <div className="leaderboard-info">
+                        <span className="leaderboard-name">{food.name}</span>
+                        <span className="leaderboard-category">{food.category}{food.area ? ` · ${food.area}` : ''}</span>
+                      </div>
+                      <div className="leaderboard-likes">
+                        <span className="leaderboard-count">{food.count}</span>
+                        <span className="leaderboard-label">like{food.count !== 1 ? 's' : ''}</span>
+                      </div>
+                      <span className="leaderboard-chevron">{isOpen ? '▲' : '▼'}</span>
+                    </button>
+
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          className="leaderboard-detail"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        >
+                          <img src={food.image} alt={food.name} className="leaderboard-detail-img" />
+                          <div className="result-links">
+                            {food.recipeUrl && (
+                              <a href={food.recipeUrl} target="_blank" rel="noopener noreferrer" className="result-link-btn result-link-btn--primary">
+                                📖 View Full Recipe
+                              </a>
+                            )}
+                            {food.youtubeUrl && (
+                              <a href={food.youtubeUrl} target="_blank" rel="noopener noreferrer" className="result-link-btn result-link-btn--yt">
+                                ▶ Watch on YouTube
+                              </a>
+                            )}
+                            {!food.recipeUrl && !food.youtubeUrl && (
+                              <p style={{ color: 'var(--text)', fontSize: '0.9rem', textAlign: 'center' }}>No recipe link available.</p>
+                            )}
+                          </div>
+                          <NearbyRestaurants foodName={food.name} category={food.area || food.category} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </li>
+                )
+              })}
             </ul>
           )}
 
