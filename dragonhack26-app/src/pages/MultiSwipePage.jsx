@@ -285,7 +285,7 @@ export default function MultiSwipePage() {
           </button>
         </div>
         <div className="swipe-header__center">
-          <img src={logo1} alt="" className="swipe-header__logo-img" width={173} height={113} />
+          <img src={logo1} alt="" className="setup-logo-img" style={{ height: '100px', width: 'auto', margin: 0 }} />
         </div>
         <div className="swipe-header__side swipe-header__side--right">
           <span className="swipe-header__count">{stack.length} left</span>
