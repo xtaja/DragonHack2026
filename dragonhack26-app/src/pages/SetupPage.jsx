@@ -17,7 +17,6 @@ import {
 } from 'react-icons/fa6'
 import {
   GiCampCookingPot,
-  GiForkKnifeSpoon,
   GiTomato,
   GiPeanut,
   GiNoodles,
@@ -28,6 +27,7 @@ import { MdOutlineRamenDining } from 'react-icons/md'
 import { TbSalt, TbPepper, TbWheat, TbSoup, TbMilk, TbNut } from 'react-icons/tb'
 import PreferenceChip from '../components/PreferenceChip'
 import useAppStore from '../store/useAppStore'
+import logo1 from '../assets/logo1.svg'
 
 const PREFERENCE_GROUPS = [
   {
@@ -98,10 +98,15 @@ export default function SetupPage() {
       transition={{ duration: 0.4 }}
     >
       <header className="setup-header">
-        <div className="setup-logo setup-logo--icon">
-          <GiForkKnifeSpoon size={52} aria-hidden />
+        <div className="setup-logo">
+        <img
+          src={logo1}
+          alt="Tindish"
+          className="setup-logo-img"
+          style={{ height: "120px", width: "auto" }}
+        />
+
         </div>
-        <h1 className="setup-title">Tindish</h1>
         <p className="setup-subtitle">Find your next meal, one swipe at a time</p>
       </header>
 

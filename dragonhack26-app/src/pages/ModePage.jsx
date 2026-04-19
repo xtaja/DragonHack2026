@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { HiChevronLeft } from 'react-icons/hi2'
-import { MdGroups, MdRestaurant, MdPerson } from 'react-icons/md'
+import { MdGroups, MdPerson } from 'react-icons/md'
 import useAppStore from '../store/useAppStore'
 
 export default function ModePage() {
@@ -16,9 +16,6 @@ export default function ModePage() {
       transition={{ duration: 0.4 }}
     >
       <header className="setup-header">
-        <div className="setup-logo setup-logo--icon">
-          <MdRestaurant size={52} aria-hidden />
-        </div>
         <h1 className="setup-title">Hey, {username}!</h1>
         <p className="setup-subtitle">How do you want to play?</p>
       </header>
