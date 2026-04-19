@@ -489,8 +489,10 @@ button { cursor: pointer; }
 }
 
 .swipe-tag--muted {
-  background: rgba(255,255,255,0.22);
-  color: #fff;
+  background: var(--text);
+  border-color: var(--bg);
+  color: var(--bg);
+  font-weight: 600;
 }
 
 .swipe-card__name {
@@ -590,11 +592,23 @@ button { cursor: pointer; }
 
 .swipe-btn:active { transform: scale(0.93); }
 
-.swipe-btn--skip { border-color: #fca5a5; }
-.swipe-btn--skip:hover { border-color: #ef4444; background: rgba(239,68,68,0.08); }
+.swipe-btn--skip {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1.5px solid var(--accent-border);
+  border-radius: 999px;
+  /*transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;*/
+}
 
-.swipe-btn--like { border-color: #86efac; }
-.swipe-btn--like:hover { border-color: #22c55e; background: rgba(34,197,94,0.08); }
+.swipe-btn--skip:hover {
+  transform: scale(1.1);
+}
+
+.swipe-btn--like { color: var(--accent);
+  background: var(--accent-bg);
+  border: 1.5px solid var(--accent-border);
+  border-radius: 999px; }
+.swipe-btn--like:hover {  transform: scale(1.1);}
 
 /* ── Loading spinner ──────────────────────────────────────── */
 .swipe-spinner {
@@ -832,10 +846,12 @@ button { cursor: pointer; }
 
 /* ── Detail button ────────────────────────────────────────── */
 .swipe-btn--detail {
-  border-color: #93c5fd;
-  font-size: 1.3rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1.5px solid var(--text);
+  border-radius: 999px;
 }
-.swipe-btn--detail:hover { border-color: #3b82f6; background: rgba(59,130,246,0.08); }
+.swipe-btn--detail:hover { transform: scale(1.1); }
 
 /* ── Room code display ────────────────────────────────────── */
 .room-code-row {

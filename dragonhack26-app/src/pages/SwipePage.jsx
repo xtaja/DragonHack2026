@@ -7,7 +7,7 @@ import {
   HiOutlineInformationCircle,
 } from 'react-icons/hi2'
 import { MdRestaurant } from 'react-icons/md'
-import { FaXmark } from 'react-icons/fa6'
+import { FaHeart,FaHeartBroken, FaInfo } from 'react-icons/fa'
 import { TbLoader2, TbMoodSad } from 'react-icons/tb'
 import SwipeCard from '../components/SwipeCard'
 import FoodDetail from '../components/FoodDetail'
@@ -124,13 +124,13 @@ export default function SwipePage() {
 
         <div className="swipe-actions">
           <button type="button" className="swipe-btn swipe-btn--skip" onClick={handleSkip} aria-label="Skip">
-            <FaXmark size={26} aria-hidden />
+            <FaHeartBroken size={26} aria-hidden />
           </button>
           <button type="button" className="swipe-btn swipe-btn--detail" onClick={() => setShowDetail(true)} aria-label="Details">
-            <HiOutlineInformationCircle size={28} aria-hidden />
+            <FaInfo size={28} aria-hidden />
           </button>
           <button type="button" className="swipe-btn swipe-btn--like" onClick={() => handleLike(topFood)} aria-label="Like">
-            <HiOutlineHeart size={28} aria-hidden />
+            <FaHeart size={28} aria-hidden />
           </button>
         </div>
       </div>

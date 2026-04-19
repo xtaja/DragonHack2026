@@ -23,8 +23,8 @@ import {
   GiNoodles,
   GiTacos,
 } from 'react-icons/gi'
-import { LuCandy, LuSalad, LuFish} from 'react-icons/lu'
-import { MdRamenDining } from 'react-icons/md'
+import { LuCandy, LuSalad, LuFish, LuPizza, LuWine, LuVegan, LuCarrot, LuNutOff, LuMilkOff, LuWheatOff, LuMoonStar, LuX} from 'react-icons/lu'
+import { MdOutlineRamenDining } from 'react-icons/md'
 import { TbSalt, TbPepper, TbWheat, TbSoup, TbMilk, TbNut } from 'react-icons/tb'
 import PreferenceChip from '../components/PreferenceChip'
 import useAppStore from '../store/useAppStore'
@@ -50,9 +50,9 @@ const PREFERENCE_GROUPS = [
   {
     label: 'Cuisine',
     options: [
-      { label: 'Italian', Icon: FaPizzaSlice },
-      { label: 'Chinese', Icon: MdRamenDining },
-      { label: 'French', Icon: FaWineGlass },
+      { label: 'Italian', Icon: LuPizza },
+      { label: 'Chinese', Icon: MdOutlineRamenDining },
+      { label: 'French', Icon: LuWine },
       { label: 'Mexican', Icon: GiTacos },
       { label: 'Indian', Icon: FaGlobe },
     ],
@@ -60,12 +60,12 @@ const PREFERENCE_GROUPS = [
 ]
 
 const RESTRICTIONS = [
-  { label: 'Vegan', Icon: FaSeedling },
-  { label: 'Vegetarian', Icon: FaCarrot },
-  { label: 'Gluten-free', Icon: TbWheat },
-  { label: 'Nut Allergy', Icon: GiPeanut },
-  { label: 'Lactose-free', Icon: TbMilk },
-  { label: 'Halal', Icon: FaMosque },
+  { label: 'Vegan', Icon: LuVegan },
+  { label: 'Vegetarian', Icon: LuCarrot },
+  { label: 'Halal', Icon: LuMoonStar },
+  { label: 'Gluten-free', Icon: LuWheatOff },
+  { label: 'Nut Allergy', Icon: LuNutOff },
+  { label: 'Lactose-free', Icon: LuMilkOff },
 ]
 
 export default function SetupPage() {
@@ -188,7 +188,7 @@ export default function SetupPage() {
               {dislikes.map((d) => (
                 <button key={d} type="button" className="chip chip--dislike chip--dislike-remove" onClick={() => removeDislike(d)}>
                   <span>{d}</span>
-                  <FaCartShopping size={14} aria-hidden />
+                  <LuX size={14} aria-hidden />
                 </button>
               ))}
             </div>

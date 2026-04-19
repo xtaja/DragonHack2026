@@ -1,5 +1,5 @@
 :root {
-  --text: #A2937F;
+  --text: #a2937f;
   --text-light: #f4e8da;
   --text-h: #1e1b17;
   --gradientbg:linear-gradient(135deg, #ff8400, #ffb347);
@@ -9,7 +9,7 @@
   --accent: #ff8400;
   --accent-bg: rgba(255, 132, 0, 0.1);
   --accent-border: rgba(255, 132, 0, 0.5);
-  --social-bg: rgba(161, 147, 127, 0.5);
+  --social-bg: rgb(162, 147, 127, 0.2);
   --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
