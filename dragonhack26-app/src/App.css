@@ -1010,3 +1010,9 @@ button { cursor: pointer; }
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
+
+.detail-inner {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}

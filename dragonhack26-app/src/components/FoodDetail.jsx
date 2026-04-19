@@ -22,6 +22,7 @@ export default function FoodDetail({ food, onClose }) {
         >
           <div className="detail-handle" />
 
+          <div className="detail-inner">
           <div className="detail-header">
             <img src={food.image} alt={food.name} className="detail-thumb" />
             <div>
@@ -61,6 +62,7 @@ export default function FoodDetail({ food, onClose }) {
           )}
 
           <button className="detail-close" onClick={onClose}>Close ↓</button>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
