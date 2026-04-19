@@ -5,25 +5,32 @@ import { QRCodeSVG } from 'qrcode.react'
 import { HiChevronLeft } from 'react-icons/hi2'
 import { MdCheck, MdHome } from 'react-icons/md'
 import { socket } from '../lib/socket'
-import { useFoodData } from '../hooks/useFoodData'
+import { fetchFoods } from '../hooks/useFoodData'
 import useAppStore from '../store/useAppStore'
+
+function mergePrefs(allMembers) {
+  return {
+    preferences: [...new Set(allMembers.flatMap(m => m.preferences || []))],
+    restrictions: [...new Set(allMembers.flatMap(m => m.restrictions || []))],
+    dislikes:     [...new Set(allMembers.flatMap(m => m.dislikes     || []))],
+  }
+}
 
 export default function CreateRoomPage() {
   const navigate = useNavigate()
-  const username = useAppStore(s => s.username)
+  const { username, preferences, restrictions, dislikes,
+          setRoom, setRoomMembers, setMultiplayerFoods } = useAppStore()
 
   if (!username.trim()) {
     return <Navigate to="/?next=%2Froom%2Fcreate" replace />
   }
-  const { setRoom, setRoomMembers, setMultiplayerFoods } = useAppStore()
 
   const [roomCode, setRoomCode] = useState(null)
-  const [members, setMembers] = useState([])
+  const [members, setMembers] = useState([])      // full member objects incl. prefs
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState(false)
+  const [starting, setStarting] = useState(false)
   const didCreate = useRef(false)
-
-  const { foods, loading: foodsLoading } = useFoodData()
 
   useEffect(() => {
     socket.on('room-created', ({ code, members }) => {
@@ -53,7 +60,7 @@ export default function CreateRoomPage() {
     if (!didCreate.current) {
       didCreate.current = true
       socket.connect()
-      socket.emit('create-room', { username })
+      socket.emit('create-room', { username, preferences, restrictions, dislikes })
     }
 
     return () => {
@@ -65,33 +72,44 @@ export default function CreateRoomPage() {
     }
   }, [])
 
-  const joinLink = roomCode
-    ? `${window.location.origin}/room/join?code=${roomCode}`
-    : ''
+  const joinLink = roomCode ? `${window.location.origin}/room/join?code=${roomCode}` : ''
 
   function handleCopyCode() {
     navigator.clipboard.writeText(roomCode).then(() => {
-      setCopied('code')
-      setTimeout(() => setCopied(false), 2000)
+      setCopied('code'); setTimeout(() => setCopied(false), 2000)
     })
   }
 
   function handleCopyLink() {
     navigator.clipboard.writeText(joinLink).then(() => {
-      setCopied('link')
-      setTimeout(() => setCopied(false), 2000)
+      setCopied('link'); setTimeout(() => setCopied(false), 2000)
     })
   }
 
-  function handleStart() {
-    if (!foods.length) return
-    socket.emit('start-game', { roomCode, foods })
+  async function handleStart() {
+    setStarting(true)
+    try {
+      const merged = mergePrefs(members)
+      const foods = await fetchFoods(merged)
+      socket.emit('start-game', { roomCode, foods })
+    } catch {
+      setError('Failed to fetch recipes. Try again.')
+      setStarting(false)
+    }
   }
 
   function handleLeave() {
     socket.disconnect()
     navigate('/multiplayer')
   }
+
+  // Build a readable summary of merged prefs for the lobby
+  const merged = mergePrefs(members)
+  const prefSummary = [
+    merged.preferences.length ? `Preferences: ${merged.preferences.join(', ')}` : null,
+    merged.restrictions.length ? `Restrictions: ${merged.restrictions.join(', ')}` : null,
+    merged.dislikes.length ? `Avoiding: ${merged.dislikes.join(', ')}` : null,
+  ].filter(Boolean)
 
   return (
     <motion.div
@@ -166,13 +184,23 @@ export default function CreateRoomPage() {
           )}
         </section>
 
+        {/* Merged prefs summary */}
+        {members.length > 1 && prefSummary.length > 0 && (
+          <section className="setup-section">
+            <label className="setup-label">Combined preferences</label>
+            {prefSummary.map((line, i) => (
+              <p key={i} className="setup-hint" style={{ margin: 0 }}>{line}</p>
+            ))}
+          </section>
+        )}
+
         <button
           type="button"
           className="setup-cta"
           onClick={handleStart}
-          disabled={members.length < 2 || foodsLoading || !foods.length}
+          disabled={members.length < 2 || starting}
         >
-          {foodsLoading ? 'Loading food…' : `Start Game (${members.length} players)`}
+          {starting ? 'Fetching recipes…' : `Start Game (${members.length} players)`}
         </button>
 
         <button type="button" className="setup-back setup-back--with-icon" onClick={handleLeave} style={{ alignSelf: 'center' }}>

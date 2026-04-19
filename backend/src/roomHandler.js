@@ -1,4 +1,4 @@
-// rooms: Map<code, { code, host, members: Map<socketId, {username}>, foods, swipes: Map<foodId, Set<socketId>>, status }>
+// rooms: Map<code, { code, host, members, foods, swipes, donePlayers, status }>
 const rooms = new Map()
 
 function generateCode() {
@@ -6,27 +6,46 @@ function generateCode() {
 }
 
 function memberList(room) {
-  return [...room.members.values()].map(m => ({ username: m.username }))
+  return [...room.members.values()].map(m => ({
+    username: m.username,
+    preferences: m.preferences,
+    restrictions: m.restrictions,
+    dislikes: m.dislikes,
+  }))
+}
+
+function buildScores(room) {
+  return [...room.swipes.entries()]
+    .map(([foodId, voters]) => ({ foodId, count: voters.size }))
+    .sort((a, b) => b.count - a.count)
+}
+
+function checkGameOver(io, roomCode, room) {
+  if (room.donePlayers.size >= room.members.size) {
+    room.status = 'finished'
+    io.to(roomCode).emit('game-over', { scores: buildScores(room) })
+  }
 }
 
 export function setupRoomHandler(io) {
   io.on('connection', (socket) => {
 
-    socket.on('create-room', ({ username }) => {
+    socket.on('create-room', ({ username, preferences = [], restrictions = [], dislikes = [] }) => {
       const code = generateCode()
       rooms.set(code, {
         code,
         host: socket.id,
-        members: new Map([[socket.id, { username }]]),
+        members: new Map([[socket.id, { username, preferences, restrictions, dislikes }]]),
         foods: null,
         swipes: new Map(),
+        donePlayers: new Set(),
         status: 'waiting',
       })
       socket.join(code)
-      socket.emit('room-created', { code, members: [{ username }], isHost: true })
+      socket.emit('room-created', { code, members: memberList(rooms.get(code)), isHost: true })
     })
 
-    socket.on('join-room', ({ roomCode, username }) => {
+    socket.on('join-room', ({ roomCode, username, preferences = [], restrictions = [], dislikes = [] }) => {
       const room = rooms.get(roomCode)
       if (!room) { socket.emit('room-error', { message: 'Room not found.' }); return }
       if (room.status !== 'waiting') { socket.emit('room-error', { message: 'Game already started.' }); return }
@@ -40,7 +59,7 @@ export function setupRoomHandler(io) {
         return
       }
 
-      room.members.set(socket.id, { username })
+      room.members.set(socket.id, { username, preferences, restrictions, dislikes })
       socket.join(roomCode)
       const members = memberList(room)
       socket.emit('room-joined', { code: roomCode, members, isHost: false })
@@ -50,9 +69,11 @@ export function setupRoomHandler(io) {
     socket.on('start-game', ({ roomCode, foods }) => {
       const room = rooms.get(roomCode)
       if (!room || room.host !== socket.id) return
-      room.foods = foods
+      room.foods = foods.slice(0, 30)
+      room.swipes = new Map()
+      room.donePlayers = new Set()
       room.status = 'playing'
-      io.to(roomCode).emit('game-started', { foods })
+      io.to(roomCode).emit('game-started', { foods: room.foods })
     })
 
     socket.on('swipe-right', ({ roomCode, foodId }) => {
@@ -66,11 +87,20 @@ export function setupRoomHandler(io) {
       }
     })
 
+    socket.on('player-done', ({ roomCode }) => {
+      const room = rooms.get(roomCode)
+      if (!room || room.status !== 'playing') return
+      room.donePlayers.add(socket.id)
+      console.log(`[room ${roomCode}] Player done: ${room.donePlayers.size}/${room.members.size}`)
+      checkGameOver(io, roomCode, room)
+    })
+
     socket.on('disconnecting', () => {
       for (const [code, room] of rooms) {
         if (!room.members.has(socket.id)) continue
         const { username } = room.members.get(socket.id)
         room.members.delete(socket.id)
+        room.donePlayers.delete(socket.id)
         if (room.members.size === 0) {
           rooms.delete(code); break
         }
@@ -79,6 +109,8 @@ export function setupRoomHandler(io) {
         }
         const members = memberList(room)
         io.to(code).emit('member-left', { username, members })
+        // Check if remaining players are all done after disconnect
+        if (room.status === 'playing') checkGameOver(io, code, room)
         break
       }
     })

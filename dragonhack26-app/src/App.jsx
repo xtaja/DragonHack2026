@@ -7,11 +7,13 @@ import MultiplayerPage from './pages/MultiplayerPage'
 import CreateRoomPage from './pages/CreateRoomPage'
 import JoinRoomPage from './pages/JoinRoomPage'
 import MultiSwipePage from './pages/MultiSwipePage'
+import HomeButton from './components/HomeButton'
 import './App.css'
 
 function App() {
   return (
     <BrowserRouter>
+      <HomeButton />
       <Routes>
         <Route path="/" element={<SetupPage />} />
         <Route path="/mode" element={<ModePage />} />

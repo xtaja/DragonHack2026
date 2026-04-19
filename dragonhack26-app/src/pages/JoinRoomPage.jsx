@@ -10,8 +10,8 @@ import useAppStore from '../store/useAppStore'
 export default function JoinRoomPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const username = useAppStore(s => s.username)
-  const { setRoom, setRoomMembers, setMultiplayerFoods } = useAppStore()
+  const { username, preferences, restrictions, dislikes,
+          setRoom, setRoomMembers, setMultiplayerFoods } = useAppStore()
 
   const codeFromUrl = searchParams.get('code') || ''
   const [code, setCode] = useState(codeFromUrl)
@@ -66,7 +66,7 @@ export default function JoinRoomPage() {
     const trimmed = code.trim().toUpperCase()
     if (!trimmed) return
     setError(null)
-    socket.emit('join-room', { roomCode: trimmed, username })
+    socket.emit('join-room', { roomCode: trimmed, username, preferences, restrictions, dislikes })
   }
 
   function handleLeave() {
