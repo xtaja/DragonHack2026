@@ -7,7 +7,7 @@ import {
   HiOutlineInformationCircle,
 } from 'react-icons/hi2'
 import { FaArrowRight, FaBookOpen, FaXmark, FaYoutube } from 'react-icons/fa6'
-import { MdCelebration, MdGroups } from 'react-icons/md'
+import { MdCelebration } from 'react-icons/md'
 import { TbMoodSad } from 'react-icons/tb'
 import SwipeCard from '../components/SwipeCard'
 import FoodDetail from '../components/FoodDetail'
@@ -15,6 +15,7 @@ import NearbyRestaurants from '../components/NearbyRestaurants'
 import { socket } from '../lib/socket'
 import { fetchFoods } from '../hooks/useFoodData'
 import useAppStore from '../store/useAppStore'
+import logo1 from '../assets/logo1.svg'
 
 const MEDALS = ['🥇', '🥈', '🥉']
 
@@ -177,7 +178,9 @@ export default function MultiSwipePage() {
     return (
       <motion.div className="setup-page" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
         <header className="setup-header">
-          <div className="setup-logo">📊</div>
+          <div className="setup-logo">
+            <img src={logo1} alt="" className="setup-logo-img setup-logo-img--board" width={173} height={113} />
+          </div>
           <h1 className="setup-title">No Match Found</h1>
           <p className="setup-subtitle">Here's what everyone liked</p>
         </header>
@@ -275,14 +278,23 @@ export default function MultiSwipePage() {
   return (
     <div className="setup-page swipe-page">
       <header className="swipe-header">
-        <button className="setup-back" onClick={handleLeave}>← Leave</button>
-        <span className="swipe-header__logo">👥 FoodSwipe</span>
-        <span className="swipe-header__count">{stack.length} left</span>
+        <div className="swipe-header__side swipe-header__side--left">
+          <button type="button" className="setup-back setup-back--with-icon" onClick={handleLeave}>
+            <HiChevronLeft size={18} aria-hidden />
+            Leave
+          </button>
+        </div>
+        <div className="swipe-header__center">
+          <img src={logo1} alt="" className="swipe-header__logo-img" width={173} height={113} />
+        </div>
+        <div className="swipe-header__side swipe-header__side--right">
+          <span className="swipe-header__count">{stack.length} left</span>
+        </div>
       </header>
 
       <div className="multi-match-hint multi-match-hint-row">
         <span>Swipe right when you want this — a match needs everyone to agree</span>
-        <HiOutlineHeart size={16} aria-hidden style={{ color: 'var(--accent)', flexShrink: 0 }} />
+        <HiOutlineHeart size={16} aria-hidden className="multi-match-hint__icon" />
       </div>
 
       <div className="swipe-card-area">

@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
+import logo1 from '../assets/logo1.svg'
 
 export default function HomeButton() {
   const { pathname } = useLocation()
@@ -7,8 +8,8 @@ export default function HomeButton() {
   if (pathname === '/') return null
 
   return (
-    <button className="home-btn" onClick={() => navigate('/')} aria-label="Home">
-      🏠
+    <button type="button" className="home-btn" onClick={() => navigate('/')} aria-label="Home">
+      <img src={logo1} alt="" className="home-btn__img" width={173} height={113} />
     </button>
   )
 }

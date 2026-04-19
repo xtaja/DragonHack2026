@@ -6,9 +6,10 @@ import {
   HiOutlineHeart,
   HiOutlineInformationCircle,
 } from 'react-icons/hi2'
-import { MdRestaurant } from 'react-icons/md'
 import { FaXmark } from 'react-icons/fa6'
-import { TbLoader2, TbMoodSad } from 'react-icons/tb'
+import { TbMoodSad } from 'react-icons/tb'
+import logo1 from '../assets/logo1.svg'
+import loadingIcon from '../assets/icon.svg'
 import SwipeCard from '../components/SwipeCard'
 import FoodDetail from '../components/FoodDetail'
 import { useFoodData } from '../hooks/useFoodData'
@@ -53,7 +54,7 @@ export default function SwipePage() {
   if (loading) {
     return (
       <div className="setup-page swipe-page swipe-page--center">
-        <TbLoader2 className="swipe-loading-spinner" aria-hidden />
+        <img src={loadingIcon} alt="" className="swipe-loading-icon" width={48} height={48} />
         <p className="swipe-loading-text">Finding food for you…</p>
       </div>
     )
@@ -90,15 +91,24 @@ export default function SwipePage() {
   return (
     <div className="setup-page swipe-page">
       <header className="swipe-header">
-        <button type="button" className="setup-back setup-back--with-icon" onClick={() => navigate('/mode')}>
-          <HiChevronLeft size={18} aria-hidden />
-          Back
-        </button>
-        <span className="swipe-header__brand">
-          <MdRestaurant aria-hidden />
-          FoodSwipe
-        </span>
-        <span className="swipe-header__count">{stack.length} left</span>
+        <div className="swipe-header__side swipe-header__side--left">
+          <button type="button" className="setup-back setup-back--with-icon" onClick={() => navigate('/mode')}>
+            <HiChevronLeft size={18} aria-hidden />
+            Back
+          </button>
+        </div>
+        <div className="swipe-header__center">
+        <img
+          src={logo1}
+          alt="Tindish"
+          className="setup-logo-img"
+          style={{ height: "100px", width: "auto" }}
+        />
+
+        </div>
+        <div className="swipe-header__side swipe-header__side--right">
+          <span className="swipe-header__count">{stack.length} left</span>
+        </div>
       </header>
 
       <div className="swipe-card-area">
