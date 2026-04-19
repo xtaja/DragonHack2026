@@ -1,46 +1,71 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import {
+  FaArrowRight,
+  FaCakeCandles,
+  FaCarrot,
+  FaFish,
+  FaGlobe,
+  FaMosque,
+  FaPepperHot,
+  FaPizzaSlice,
+  FaSeedling,
+  FaCartShopping,
+  FaUtensils,
+  FaWineGlass,
+} from 'react-icons/fa6'
+import {
+  GiCampCookingPot,
+  GiTomato,
+  GiPeanut,
+  GiNoodles,
+  GiTacos,
+} from 'react-icons/gi'
+import { LuCandy, LuSalad, LuFish, LuPizza, LuWine, LuVegan, LuCarrot, LuNutOff, LuMilkOff, LuWheatOff, LuMoonStar, LuX} from 'react-icons/lu'
+import { MdOutlineRamenDining } from 'react-icons/md'
+import { TbSalt, TbPepper, TbWheat, TbSoup, TbMilk, TbNut } from 'react-icons/tb'
 import PreferenceChip from '../components/PreferenceChip'
 import useAppStore from '../store/useAppStore'
+import logo1 from '../assets/logo1.svg'
 
 const PREFERENCE_GROUPS = [
   {
     label: 'Taste',
     options: [
-      { label: 'Sweet',  emoji: '🍬' },
-      { label: 'Savory', emoji: '🧂' },
-      { label: 'Spicy',  emoji: '🌶️' },
+      { label: 'Sweet', Icon: LuCandy},
+      { label: 'Savory', Icon: TbSalt },
+      { label: 'Spicy', Icon: TbPepper},
     ],
   },
   {
     label: 'Dish Type',
     options: [
-      { label: 'Pasta',   emoji: '🍝' },
-      { label: 'Soup',    emoji: '🍲' },
-      { label: 'Salad',   emoji: '🥗' },
-      { label: 'Seafood', emoji: '🦞' },
+      { label: 'Pasta', Icon: GiNoodles },
+      { label: 'Soup', Icon: TbSoup },
+      { label: 'Salad', Icon: LuSalad },
+      { label: 'Seafood', Icon: LuFish },
     ],
   },
   {
     label: 'Cuisine',
     options: [
-      { label: 'Italian', emoji: '🇮🇹' },
-      { label: 'Chinese', emoji: '🇨🇳' },
-      { label: 'French',  emoji: '🇫🇷' },
-      { label: 'Mexican', emoji: '🌮' },
-      { label: 'Indian',  emoji: '🇮🇳' },
+      { label: 'Italian', Icon: LuPizza },
+      { label: 'Chinese', Icon: MdOutlineRamenDining },
+      { label: 'French', Icon: LuWine },
+      { label: 'Mexican', Icon: GiTacos },
+      { label: 'Indian', Icon: FaGlobe },
     ],
   },
 ]
 
 const RESTRICTIONS = [
-  { label: 'Vegan',        emoji: '🌱' },
-  { label: 'Vegetarian',   emoji: '🥦' },
-  { label: 'Gluten-free',  emoji: '🌾' },
-  { label: 'Nut Allergy',  emoji: '🥜' },
-  { label: 'Lactose-free', emoji: '🥛' },
-  { label: 'Halal',        emoji: '☪️' },
+  { label: 'Vegan', Icon: LuVegan },
+  { label: 'Vegetarian', Icon: LuCarrot },
+  { label: 'Halal', Icon: LuMoonStar },
+  { label: 'Gluten-free', Icon: LuWheatOff },
+  { label: 'Nut Allergy', Icon: LuNutOff },
+  { label: 'Lactose-free', Icon: LuMilkOff },
 ]
 
 export default function SetupPage() {
@@ -73,13 +98,19 @@ export default function SetupPage() {
       transition={{ duration: 0.4 }}
     >
       <header className="setup-header">
-        <div className="setup-logo">🍽️</div>
-        <h1 className="setup-title">FoodSwipe</h1>
+        <div className="setup-logo">
+        <img
+          src={logo1}
+          alt="Tindish"
+          className="setup-logo-img"
+          style={{ height: "120px", width: "auto" }}
+        />
+
+        </div>
         <p className="setup-subtitle">Find your next meal, one swipe at a time</p>
       </header>
 
       <div className="setup-card">
-        {/* Username */}
         <section className="setup-section">
           <label className="setup-label" htmlFor="username">
             Your name <span className="required">*</span>
@@ -96,7 +127,6 @@ export default function SetupPage() {
           {error && <p className="setup-error">{error}</p>}
         </section>
 
-        {/* Preferences — 3 grouped sections */}
         <section className="setup-section">
           <label className="setup-label">
             Preferences <span className="optional">(optional)</span>
@@ -111,7 +141,7 @@ export default function SetupPage() {
                     <PreferenceChip
                       key={p.label}
                       label={p.label}
-                      emoji={p.emoji}
+                      Icon={p.Icon}
                       selected={preferences.includes(p.label)}
                       onClick={() => togglePreference(p.label)}
                     />
@@ -122,7 +152,6 @@ export default function SetupPage() {
           </div>
         </section>
 
-        {/* Restrictions */}
         <section className="setup-section">
           <label className="setup-label">
             Dietary restrictions <span className="optional">(optional)</span>
@@ -133,7 +162,7 @@ export default function SetupPage() {
               <PreferenceChip
                 key={r.label}
                 label={r.label}
-                emoji={r.emoji}
+                Icon={r.Icon}
                 selected={restrictions.includes(r.label)}
                 onClick={() => toggleRestriction(r.label)}
               />
@@ -141,7 +170,6 @@ export default function SetupPage() {
           </div>
         </section>
 
-        {/* Dislikes */}
         <section className="setup-section">
           <label className="setup-label">
             Ingredients to avoid <span className="optional">(optional)</span>
@@ -163,16 +191,18 @@ export default function SetupPage() {
           {dislikes.length > 0 && (
             <div className="chip-group chip-group--mt">
               {dislikes.map((d) => (
-                <button key={d} type="button" className="chip chip--dislike" onClick={() => removeDislike(d)}>
-                  {d} ✕
+                <button key={d} type="button" className="chip chip--dislike chip--dislike-remove" onClick={() => removeDislike(d)}>
+                  <span>{d}</span>
+                  <LuX size={14} aria-hidden />
                 </button>
               ))}
             </div>
           )}
         </section>
 
-        <button className="setup-cta" onClick={handleContinue}>
-          Let's eat →
+        <button type="button" className="setup-cta setup-cta--with-icon" onClick={handleContinue}>
+          <span>Let's eat</span>
+          <FaArrowRight size={20} aria-hidden />
         </button>
       </div>
     </motion.div>

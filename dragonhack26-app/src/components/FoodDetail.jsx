@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
+import { MdExpandMore } from 'react-icons/md'
 
 export default function FoodDetail({ food, onClose }) {
   if (!food) return null
@@ -61,7 +62,10 @@ export default function FoodDetail({ food, onClose }) {
             </section>
           )}
 
-          <button className="detail-close" onClick={onClose}>Close ↓</button>
+          <button type="button" className="detail-close detail-close--with-icon" onClick={onClose}>
+            Close
+            <MdExpandMore size={18} aria-hidden />
+          </button>
           </div>
         </motion.div>
       </motion.div>

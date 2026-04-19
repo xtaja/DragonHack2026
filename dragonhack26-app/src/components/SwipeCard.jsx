@@ -1,4 +1,6 @@
 import { useMotionValue, useTransform, motion, animate } from 'framer-motion'
+import { FaHeart, FaXmark } from 'react-icons/fa6'
+import { TbArrowLeft, TbArrowRight, TbArrowUp } from 'react-icons/tb'
 
 const SWIPE_X = 90
 const SWIPE_UP = 70
@@ -49,10 +51,12 @@ export default function SwipeCard({ food, onLike, onSkip, onDetail, isTop, stack
       {isTop && (
         <>
           <motion.div className="swipe-label swipe-label--like" style={{ opacity: likeOpacity }}>
-            ❤️ LIKE
+            <FaHeart aria-hidden />
+            LIKE
           </motion.div>
           <motion.div className="swipe-label swipe-label--skip" style={{ opacity: skipOpacity }}>
-            ✕ SKIP
+            <FaXmark aria-hidden />
+            SKIP
           </motion.div>
         </>
       )}
@@ -63,7 +67,16 @@ export default function SwipeCard({ food, onLike, onSkip, onDetail, isTop, stack
           {food.area && <span className="swipe-tag swipe-tag--muted">{food.area}</span>}
         </div>
         <h2 className="swipe-card__name">{food.name}</h2>
-        {isTop && <p className="swipe-card__hint">↑ drag up for details · ← → or arrow keys</p>}
+        {isTop && (
+          <p className="swipe-card__hint swipe-card__hint--icons">
+            <TbArrowUp className="swipe-card__hint-icon" aria-hidden />
+            drag up for details
+            <span className="swipe-card__hint-sep">·</span>
+            <TbArrowLeft className="swipe-card__hint-icon" aria-hidden />
+            <TbArrowRight className="swipe-card__hint-icon" aria-hidden />
+            or arrow keys
+          </p>
+        )}
       </div>
     </motion.div>
   )

@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { HiChevronLeft } from 'react-icons/hi2'
+import { MdGroups, MdPerson } from 'react-icons/md'
 import useAppStore from '../store/useAppStore'
 
 export default function ModePage() {
@@ -14,27 +16,33 @@ export default function ModePage() {
       transition={{ duration: 0.4 }}
     >
       <header className="setup-header">
-        <div className="setup-logo">🍽️</div>
         <h1 className="setup-title">Hey, {username}!</h1>
         <p className="setup-subtitle">How do you want to play?</p>
       </header>
 
-      <div className="mode-card-group">
-        <button className="mode-card" onClick={() => navigate('/swipe')}>
-          <span className="mode-card__emoji">🧑</span>
-          <span className="mode-card__title">Solo</span>
-          <span className="mode-card__desc">Find food just for you</span>
-        </button>
-        <button className="mode-card" onClick={() => navigate('/multiplayer')}>
-          <span className="mode-card__emoji">👥</span>
-          <span className="mode-card__title">Multiplayer</span>
-          <span className="mode-card__desc">Agree on a meal with friends</span>
+      <div className="setup-card">
+        <div className="mode-card-group">
+          <button type="button" className="mode-card" onClick={() => navigate('/swipe')}>
+            <span className="mode-card__icon">
+              <MdPerson aria-hidden />
+            </span>
+            <span className="mode-card__title">Solo</span>
+            <span className="mode-card__desc">Find food just for you</span>
+          </button>
+          <button type="button" className="mode-card" onClick={() => navigate('/multiplayer')}>
+            <span className="mode-card__icon">
+              <MdGroups aria-hidden />
+            </span>
+            <span className="mode-card__title">Multiplayer</span>
+            <span className="mode-card__desc">Agree on a meal with friends</span>
+          </button>
+        </div>
+
+        <button type="button" className="setup-back setup-back--with-icon" onClick={() => navigate('/')}>
+          <HiChevronLeft size={18} aria-hidden />
+          Back
         </button>
       </div>
-
-      <button className="setup-back" onClick={() => navigate('/')}>
-        ← Back
-      </button>
     </motion.div>
   )
 }

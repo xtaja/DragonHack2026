@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
+import { HiChevronLeft } from 'react-icons/hi2'
+import { MdCheck, MdHome } from 'react-icons/md'
 import { socket } from '../lib/socket'
 import { fetchFoods } from '../hooks/useFoodData'
 import useAppStore from '../store/useAppStore'
@@ -117,29 +119,44 @@ export default function CreateRoomPage() {
       transition={{ duration: 0.35 }}
     >
       <header className="setup-header">
-        <div className="setup-logo">🏠</div>
+        <div className="setup-logo setup-logo--icon">
+          <MdHome size={52} aria-hidden />
+        </div>
         <h1 className="setup-title">Your Room</h1>
         <p className="setup-subtitle">Share the code and wait for friends</p>
       </header>
 
-      <div className="setup-card" style={{ maxWidth: 420 }}>
+      <div className="setup-card">
         {error && <p className="setup-error">{error}</p>}
 
-        {/* Room code */}
         <section className="setup-section">
           <label className="setup-label">Room Code</label>
           {roomCode ? (
             <>
               <div className="room-code-row">
                 <span className="room-code">{roomCode}</span>
-                <button className="dislike-add-btn" onClick={handleCopyCode}>
-                  {copied === 'code' ? '✓ Copied' : 'Copy code'}
+                <button type="button" className="dislike-add-btn dislike-add-btn--with-icon" onClick={handleCopyCode}>
+                  {copied === 'code' ? (
+                    <>
+                      <MdCheck size={18} aria-hidden />
+                      Copied
+                    </>
+                  ) : (
+                    'Copy code'
+                  )}
                 </button>
               </div>
               <div className="room-link-row">
                 <span className="room-link">{joinLink}</span>
-                <button className="dislike-add-btn" onClick={handleCopyLink}>
-                  {copied === 'link' ? '✓ Copied' : 'Copy link'}
+                <button type="button" className="dislike-add-btn dislike-add-btn--with-icon" onClick={handleCopyLink}>
+                  {copied === 'link' ? (
+                    <>
+                      <MdCheck size={18} aria-hidden />
+                      Copied
+                    </>
+                  ) : (
+                    'Copy link'
+                  )}
                 </button>
               </div>
               <div className="room-qr">
@@ -151,7 +168,6 @@ export default function CreateRoomPage() {
           )}
         </section>
 
-        {/* Members */}
         <section className="setup-section">
           <label className="setup-label">Players ({members.length})</label>
           <ul className="member-list">
@@ -179,6 +195,7 @@ export default function CreateRoomPage() {
         )}
 
         <button
+          type="button"
           className="setup-cta"
           onClick={handleStart}
           disabled={members.length < 2 || starting}
@@ -186,8 +203,9 @@ export default function CreateRoomPage() {
           {starting ? 'Fetching recipes…' : `Start Game (${members.length} players)`}
         </button>
 
-        <button className="setup-back" onClick={handleLeave} style={{ alignSelf: 'center' }}>
-          ← Leave room
+        <button type="button" className="setup-back setup-back--with-icon" onClick={handleLeave} style={{ alignSelf: 'center' }}>
+          <HiChevronLeft size={18} aria-hidden />
+          Leave room
         </button>
       </div>
     </motion.div>

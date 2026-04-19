@@ -1,11 +1,15 @@
-export default function PreferenceChip({ label, emoji, selected, onClick }) {
+export default function PreferenceChip({ label, Icon, selected, onClick }) {
   return (
     <button
       type="button"
       className={`chip ${selected ? 'chip--selected' : ''}`}
       onClick={onClick}
     >
-      {emoji && <span className="chip__emoji">{emoji}</span>}
+      {Icon && (
+        <span className="chip__icon" aria-hidden>
+          <Icon size={17} />
+        </span>
+      )}
       {label}
     </button>
   )

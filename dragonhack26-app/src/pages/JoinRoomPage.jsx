@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { HiChevronLeft } from 'react-icons/hi2'
+import { MdHourglassEmpty, MdVpnKey } from 'react-icons/md'
+import { TbLoader2 } from 'react-icons/tb'
 import { socket } from '../lib/socket'
 import useAppStore from '../store/useAppStore'
 
@@ -13,7 +16,6 @@ export default function JoinRoomPage() {
   const codeFromUrl = searchParams.get('code') || ''
   const [code, setCode] = useState(codeFromUrl)
 
-  // Redirect to setup if no username, preserving this page as destination
   if (!username.trim()) {
     const next = codeFromUrl ? `/room/join?code=${codeFromUrl}` : '/room/join'
     return <Navigate to={`/?next=${encodeURIComponent(next)}`} replace />
@@ -24,7 +26,7 @@ export default function JoinRoomPage() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    socket.connect()   // no-op if already connected; safe to call every mount
+    socket.connect()
 
     socket.on('room-joined', ({ code, members }) => {
       setRoomCode(code)
@@ -72,7 +74,6 @@ export default function JoinRoomPage() {
     navigate('/multiplayer')
   }
 
-  // ── Lobby (after joining) ──────────────────────────────────
   if (joined) {
     return (
       <motion.div
@@ -82,12 +83,14 @@ export default function JoinRoomPage() {
         transition={{ duration: 0.35 }}
       >
         <header className="setup-header">
-          <div className="setup-logo">⏳</div>
+          <div className="setup-logo setup-logo--icon">
+            <MdHourglassEmpty size={52} aria-hidden />
+          </div>
           <h1 className="setup-title">Room {roomCode}</h1>
           <p className="setup-subtitle">Waiting for the host to start…</p>
         </header>
 
-        <div className="setup-card" style={{ maxWidth: 420 }}>
+        <div className="setup-card">
           <section className="setup-section">
             <label className="setup-label">Players ({members.length})</label>
             <ul className="member-list">
@@ -102,19 +105,19 @@ export default function JoinRoomPage() {
           </section>
 
           <div className="lobby-waiting">
-            <span className="swipe-spinner" style={{ fontSize: '1.8rem' }}>⏳</span>
+            <TbLoader2 className="lobby-waiting-spinner" aria-hidden />
             <p>Waiting for host to start the game…</p>
           </div>
 
-          <button className="setup-back" onClick={handleLeave} style={{ alignSelf: 'center' }}>
-            ← Leave room
+          <button type="button" className="setup-back setup-back--with-icon" onClick={handleLeave} style={{ alignSelf: 'center' }}>
+            <HiChevronLeft size={18} aria-hidden />
+            Leave room
           </button>
         </div>
       </motion.div>
     )
   }
 
-  // ── Code entry ─────────────────────────────────────────────
   return (
     <motion.div
       className="setup-page"
@@ -123,12 +126,14 @@ export default function JoinRoomPage() {
       transition={{ duration: 0.35 }}
     >
       <header className="setup-header">
-        <div className="setup-logo">🔑</div>
+        <div className="setup-logo setup-logo--icon">
+          <MdVpnKey size={52} aria-hidden />
+        </div>
         <h1 className="setup-title">Join Room</h1>
         <p className="setup-subtitle">Enter the code your friend shared</p>
       </header>
 
-      <div className="setup-card" style={{ maxWidth: 420 }}>
+      <div className="setup-card">
         <section className="setup-section">
           <label className="setup-label" htmlFor="room-code">Room Code</label>
           <div className="dislike-input-row">
@@ -145,6 +150,7 @@ export default function JoinRoomPage() {
               spellCheck={false}
             />
             <button
+              type="button"
               className="dislike-add-btn"
               onClick={handleJoin}
               disabled={!code.trim()}
@@ -157,19 +163,22 @@ export default function JoinRoomPage() {
               <p className="setup-error">{error}</p>
               {error.includes('already taken') && (
                 <button
-                  className="setup-back"
+                  type="button"
+                  className="setup-back setup-back--with-icon"
                   style={{ marginTop: 8 }}
                   onClick={() => navigate(`/?next=${encodeURIComponent(`/room/join?code=${code}`)}`)}
                 >
-                  ← Change username
+                  <HiChevronLeft size={18} aria-hidden />
+                  Change username
                 </button>
               )}
             </div>
           )}
         </section>
 
-        <button className="setup-back" onClick={handleLeave} style={{ alignSelf: 'center' }}>
-          ← Back
+        <button type="button" className="setup-back setup-back--with-icon" onClick={handleLeave} style={{ alignSelf: 'center' }}>
+          <HiChevronLeft size={18} aria-hidden />
+          Back
         </button>
       </div>
     </motion.div>
