@@ -1,8 +1,9 @@
 import { useState } from 'react'
+import { FaMapMarkerAlt } from 'react-icons/fa'
 import { getUserLocation, getMapsSearchUrl } from '../lib/api'
 
 export default function NearbyRestaurants({ foodName, category }) {
-  const [state, setState] = useState('idle') // idle | loading | done | error
+  const [state, setState] = useState('idle')
   const [mapsUrl, setMapsUrl] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -20,8 +21,9 @@ export default function NearbyRestaurants({ foodName, category }) {
 
   if (state === 'idle') {
     return (
-      <button className="nearby-btn" onClick={handleFind}>
-        📍 Find nearby restaurants
+      <button type="button" className="nearby-btn nearby-btn--with-icon" onClick={handleFind}>
+        <FaMapMarkerAlt aria-hidden />
+        Find nearby restaurants
       </button>
     )
   }
@@ -35,8 +37,9 @@ export default function NearbyRestaurants({ foodName, category }) {
   }
 
   return (
-    <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="result-link-btn result-link-btn--maps">
-      📍 Search nearby restaurants on Google Maps
+    <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="result-link-btn result-link-btn--maps nearby-maps-link">
+      <FaMapMarkerAlt size={20} aria-hidden />
+      Search nearby restaurants on Google Maps
     </a>
   )
 }

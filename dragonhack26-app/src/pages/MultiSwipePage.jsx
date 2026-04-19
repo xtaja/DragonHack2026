@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import {
+  HiChevronLeft,
+  HiOutlineHeart,
+  HiOutlineInformationCircle,
+} from 'react-icons/hi2'
+import { FaArrowRight, FaBookOpen, FaXmark, FaYoutube } from 'react-icons/fa6'
+import { MdCelebration, MdGroups } from 'react-icons/md'
+import { TbMoodSad } from 'react-icons/tb'
 import SwipeCard from '../components/SwipeCard'
 import FoodDetail from '../components/FoodDetail'
 import NearbyRestaurants from '../components/NearbyRestaurants'
@@ -13,7 +21,7 @@ export default function MultiSwipePage() {
 
   const [stack, setStack] = useState(() => [...multiplayerFoods].reverse())
   const [showDetail, setShowDetail] = useState(false)
-  const [matchBanner, setMatchBanner] = useState(null) // food that was matched
+  const [matchBanner, setMatchBanner] = useState(null)
 
   const topFood = stack[stack.length - 1]
   const visibleStack = stack.slice(-3)
@@ -51,7 +59,6 @@ export default function MultiSwipePage() {
     setStack(s => s.slice(0, -1))
   }
 
-  // ── Match screen ───────────────────────────────────────────
   if (matchBanner) {
     function handleContinue() {
       setLikedFood(matchBanner)
@@ -68,7 +75,10 @@ export default function MultiSwipePage() {
         transition={{ duration: 0.35 }}
       >
         <div className="result-card">
-          <div className="result-match-badge">🎉 It's a Match!</div>
+          <div className="result-match-badge result-match-badge-row">
+            <MdCelebration size={20} aria-hidden />
+            It's a Match!
+          </div>
 
           <img src={matchBanner.image} alt={matchBanner.name} className="result-img" />
 
@@ -89,12 +99,14 @@ export default function MultiSwipePage() {
           <div className="result-links">
             {matchBanner.recipeUrl && (
               <a href={matchBanner.recipeUrl} target="_blank" rel="noopener noreferrer" className="result-link-btn result-link-btn--primary">
-                📖 View Full Recipe
+                <FaBookOpen size={20} aria-hidden />
+                View Full Recipe
               </a>
             )}
             {matchBanner.youtubeUrl && (
               <a href={matchBanner.youtubeUrl} target="_blank" rel="noopener noreferrer" className="result-link-btn result-link-btn--yt">
-                ▶ Watch on YouTube
+                <FaYoutube size={22} aria-hidden />
+                Watch on YouTube
               </a>
             )}
             {!matchBanner.recipeUrl && !matchBanner.youtubeUrl && (
@@ -104,69 +116,83 @@ export default function MultiSwipePage() {
 
           <NearbyRestaurants foodName={matchBanner.name} category={matchBanner.area || matchBanner.category} />
 
-          <button className="setup-cta" onClick={handleContinue}>
-            Done →
+          <button type="button" className="setup-cta setup-cta--with-icon" onClick={handleContinue}>
+            <span>Done</span>
+            <FaArrowRight size={20} aria-hidden />
           </button>
         </div>
       </motion.div>
     )
   }
 
-  // ── No more cards ──────────────────────────────────────────
   if (!topFood) {
     return (
-      <div className="swipe-page swipe-page--center">
-        <div style={{ fontSize: 56 }}>😅</div>
-        <h2 style={{ color: 'var(--text-h)', margin: '12px 0 8px' }}>No more food!</h2>
-        <p style={{ color: 'var(--text)', marginBottom: 24 }}>No match found this round.</p>
-        <button className="setup-cta" style={{ maxWidth: 200 }} onClick={() => {
-          socket.disconnect(); clearRoom(); navigate('/mode')
-        }}>
-          Start over
-        </button>
+      <div className="setup-page swipe-page swipe-page--center">
+        <div className="setup-card setup-card--message">
+          <TbMoodSad style={{ fontSize: '3rem', color: 'var(--accent)' }} aria-hidden />
+          <h2 style={{ color: 'var(--text-h)', margin: '12px 0 8px' }}>No more food!</h2>
+          <p style={{ color: 'var(--text)', marginBottom: 8 }}>No match found this round.</p>
+          <button type="button" className="setup-cta" style={{ maxWidth: 220 }} onClick={() => {
+            socket.disconnect(); clearRoom(); navigate('/mode')
+          }}>
+            Start over
+          </button>
+        </div>
       </div>
     )
   }
 
-  // ── Main swipe view ────────────────────────────────────────
   return (
-    <div className="swipe-page">
+    <div className="setup-page swipe-page">
       <header className="swipe-header">
-        <button className="setup-back" onClick={() => { socket.disconnect(); clearRoom(); navigate('/mode') }}>
-          ← Leave
+        <button type="button" className="setup-back setup-back--with-icon" onClick={() => { socket.disconnect(); clearRoom(); navigate('/mode') }}>
+          <HiChevronLeft size={18} aria-hidden />
+          Leave
         </button>
-        <span className="swipe-header__logo">👥 FoodSwipe</span>
+        <span className="swipe-header__brand">
+          <MdGroups aria-hidden />
+          FoodSwipe
+        </span>
         <span className="swipe-header__count">{stack.length} left</span>
       </header>
 
-      <div className="multi-match-hint">
-        Swipe right when you want this — a match needs everyone to agree ❤️
+      <div className="multi-match-hint multi-match-hint-row">
+        <span>Swipe right when you want this — a match needs everyone to agree</span>
+        <HiOutlineHeart size={16} aria-hidden style={{ color: 'var(--accent)', flexShrink: 0 }} />
       </div>
 
       <div className="swipe-card-area">
-        <AnimatePresence>
-          {visibleStack.map((food, i) => {
-            const stackIndex = visibleStack.length - 1 - i
-            const isTop = stackIndex === 0
-            return (
-              <SwipeCard
-                key={food.id}
-                food={food}
-                isTop={isTop}
-                stackIndex={stackIndex}
-                onLike={handleLike}
-                onSkip={handleSkip}
-                onDetail={() => setShowDetail(true)}
-              />
-            )
-          })}
-        </AnimatePresence>
-      </div>
+        <div className="swipe-card-stack">
+          <AnimatePresence>
+            {visibleStack.map((food, i) => {
+              const stackIndex = visibleStack.length - 1 - i
+              const isTop = stackIndex === 0
+              return (
+                <SwipeCard
+                  key={food.id}
+                  food={food}
+                  isTop={isTop}
+                  stackIndex={stackIndex}
+                  onLike={handleLike}
+                  onSkip={handleSkip}
+                  onDetail={() => setShowDetail(true)}
+                />
+              )
+            })}
+          </AnimatePresence>
+        </div>
 
-      <div className="swipe-actions">
-        <button className="swipe-btn swipe-btn--skip" onClick={handleSkip} aria-label="Skip (←)">✕</button>
-        <button className="swipe-btn swipe-btn--detail" onClick={() => setShowDetail(true)} aria-label="Details (↑)">ℹ</button>
-        <button className="swipe-btn swipe-btn--like" onClick={() => handleLike(topFood)} aria-label="Like (→)">❤️</button>
+        <div className="swipe-actions">
+          <button type="button" className="swipe-btn swipe-btn--skip" onClick={handleSkip} aria-label="Skip">
+            <FaXmark size={26} aria-hidden />
+          </button>
+          <button type="button" className="swipe-btn swipe-btn--detail" onClick={() => setShowDetail(true)} aria-label="Details">
+            <HiOutlineInformationCircle size={28} aria-hidden />
+          </button>
+          <button type="button" className="swipe-btn swipe-btn--like" onClick={() => handleLike(topFood)} aria-label="Like">
+            <HiOutlineHeart size={28} aria-hidden />
+          </button>
+        </div>
       </div>
 
       {showDetail && (

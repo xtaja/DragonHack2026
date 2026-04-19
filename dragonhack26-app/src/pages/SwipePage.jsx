@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
+import {
+  HiChevronLeft,
+  HiOutlineHeart,
+  HiOutlineInformationCircle,
+} from 'react-icons/hi2'
+import { MdRestaurant } from 'react-icons/md'
+import { FaXmark } from 'react-icons/fa6'
+import { TbLoader2, TbMoodSad } from 'react-icons/tb'
 import SwipeCard from '../components/SwipeCard'
 import FoodDetail from '../components/FoodDetail'
 import { useFoodData } from '../hooks/useFoodData'
@@ -11,12 +19,11 @@ export default function SwipePage() {
   const setLikedFood = useAppStore(s => s.setLikedFood)
   const { foods, loading, error } = useFoodData()
 
-  const [stack, setStack] = useState(null)    // null = not initialised yet
+  const [stack, setStack] = useState(null)
   const [showDetail, setShowDetail] = useState(false)
 
-  // Initialise stack from foods once loaded
   if (!loading && stack === null && foods.length > 0) {
-    setStack([...foods].reverse()) // last item = top card
+    setStack([...foods].reverse())
   }
 
   function handleLike(food) {
@@ -41,13 +48,12 @@ export default function SwipePage() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [topFood, showDetail])
-  const visibleStack = stack?.slice(-3) ?? []  // render at most 3 cards
+  const visibleStack = stack?.slice(-3) ?? []
 
-  // ── Loading ──────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="swipe-page swipe-page--center">
-        <div className="swipe-spinner">🍽️</div>
+      <div className="setup-page swipe-page swipe-page--center">
+        <TbLoader2 className="swipe-loading-spinner" aria-hidden />
         <p className="swipe-loading-text">Finding food for you…</p>
       </div>
     )
@@ -55,68 +61,78 @@ export default function SwipePage() {
 
   if (error) {
     return (
-      <div className="swipe-page swipe-page--center">
-        <p>Something went wrong: {error}</p>
-        <button className="setup-cta" style={{ maxWidth: 200, marginTop: 16 }} onClick={() => navigate('/')}>
-          Go back
-        </button>
+      <div className="setup-page swipe-page swipe-page--center">
+        <div className="setup-card setup-card--message">
+          <p>Something went wrong: {error}</p>
+          <button type="button" className="setup-cta" style={{ maxWidth: 220, marginTop: 16 }} onClick={() => navigate('/')}>
+            Go back
+          </button>
+        </div>
       </div>
     )
   }
 
-  // ── Empty / finished ─────────────────────────────────────
   if (!topFood) {
     return (
-      <div className="swipe-page swipe-page--center">
-        <div style={{ fontSize: 56 }}>😅</div>
-        <h2 style={{ color: 'var(--text-h)', margin: '12px 0 8px' }}>No more food!</h2>
-        <p style={{ color: 'var(--text)', marginBottom: 24 }}>You've seen everything. Try again?</p>
-        <button className="setup-cta" style={{ maxWidth: 200 }} onClick={() => navigate('/')}>
-          Start over
-        </button>
+      <div className="setup-page swipe-page swipe-page--center">
+        <div className="setup-card setup-card--message">
+          <TbMoodSad style={{ fontSize: '3rem', color: 'var(--accent)' }} aria-hidden />
+          <h2 style={{ color: 'var(--text-h)', margin: '12px 0 8px' }}>No more food!</h2>
+          <p style={{ color: 'var(--text)', marginBottom: 8 }}>You've seen everything. Try again?</p>
+          <button type="button" className="setup-cta" style={{ maxWidth: 220 }} onClick={() => navigate('/')}>
+            Start over
+          </button>
+        </div>
       </div>
     )
   }
 
-  // ── Main swipe view ──────────────────────────────────────
   return (
-    <div className="swipe-page">
+    <div className="setup-page swipe-page">
       <header className="swipe-header">
-        <button className="setup-back" onClick={() => navigate('/mode')}>← Back</button>
-        <span className="swipe-header__logo">🍽️ FoodSwipe</span>
+        <button type="button" className="setup-back setup-back--with-icon" onClick={() => navigate('/mode')}>
+          <HiChevronLeft size={18} aria-hidden />
+          Back
+        </button>
+        <span className="swipe-header__brand">
+          <MdRestaurant aria-hidden />
+          FoodSwipe
+        </span>
         <span className="swipe-header__count">{stack.length} left</span>
       </header>
 
       <div className="swipe-card-area">
-        <AnimatePresence>
-          {visibleStack.map((food, i) => {
-            const stackIndex = visibleStack.length - 1 - i  // 0 = top
-            const isTop = stackIndex === 0
-            return (
-              <SwipeCard
-                key={food.id}
-                food={food}
-                isTop={isTop}
-                stackIndex={stackIndex}
-                onLike={handleLike}
-                onSkip={handleSkip}
-                onDetail={() => setShowDetail(true)}
-              />
-            )
-          })}
-        </AnimatePresence>
-      </div>
+        <div className="swipe-card-stack">
+          <AnimatePresence>
+            {visibleStack.map((food, i) => {
+              const stackIndex = visibleStack.length - 1 - i
+              const isTop = stackIndex === 0
+              return (
+                <SwipeCard
+                  key={food.id}
+                  food={food}
+                  isTop={isTop}
+                  stackIndex={stackIndex}
+                  onLike={handleLike}
+                  onSkip={handleSkip}
+                  onDetail={() => setShowDetail(true)}
+                />
+              )
+            })}
+          </AnimatePresence>
+        </div>
 
-      <div className="swipe-actions">
-        <button className="swipe-btn swipe-btn--skip" onClick={handleSkip} aria-label="Skip (←)">
-          ✕
-        </button>
-        <button className="swipe-btn swipe-btn--detail" onClick={() => setShowDetail(true)} aria-label="Details (↑)">
-          ℹ
-        </button>
-        <button className="swipe-btn swipe-btn--like" onClick={() => handleLike(topFood)} aria-label="Like (→)">
-          ❤️
-        </button>
+        <div className="swipe-actions">
+          <button type="button" className="swipe-btn swipe-btn--skip" onClick={handleSkip} aria-label="Skip">
+            <FaXmark size={26} aria-hidden />
+          </button>
+          <button type="button" className="swipe-btn swipe-btn--detail" onClick={() => setShowDetail(true)} aria-label="Details">
+            <HiOutlineInformationCircle size={28} aria-hidden />
+          </button>
+          <button type="button" className="swipe-btn swipe-btn--like" onClick={() => handleLike(topFood)} aria-label="Like">
+            <HiOutlineHeart size={28} aria-hidden />
+          </button>
+        </div>
       </div>
 
       {showDetail && (

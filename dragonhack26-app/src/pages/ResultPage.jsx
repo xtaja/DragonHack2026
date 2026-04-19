@@ -1,5 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { HiChevronLeft } from 'react-icons/hi2'
+import { FaBookOpen, FaYoutube } from 'react-icons/fa6'
+import { MdFavorite } from 'react-icons/md'
 import useAppStore from '../store/useAppStore'
 import NearbyRestaurants from '../components/NearbyRestaurants'
 
@@ -20,7 +23,10 @@ export default function ResultPage() {
       transition={{ duration: 0.35 }}
     >
       <div className="result-card">
-        <div className="result-match-badge">❤️ You picked this!</div>
+        <div className="result-match-badge result-match-badge-row">
+          <MdFavorite size={18} aria-hidden />
+          You picked this!
+        </div>
 
         <img src={food.image} alt={food.name} className="result-img" />
 
@@ -47,7 +53,8 @@ export default function ResultPage() {
               rel="noopener noreferrer"
               className="result-link-btn result-link-btn--primary"
             >
-              📖 View Full Recipe
+              <FaBookOpen size={20} aria-hidden />
+              View Full Recipe
             </a>
           )}
           {food.youtubeUrl && (
@@ -57,7 +64,8 @@ export default function ResultPage() {
               rel="noopener noreferrer"
               className="result-link-btn result-link-btn--yt"
             >
-              ▶ Watch on YouTube
+              <FaYoutube size={22} aria-hidden />
+              Watch on YouTube
             </a>
           )}
           {!food.recipeUrl && !food.youtubeUrl && (
@@ -67,8 +75,9 @@ export default function ResultPage() {
 
         <NearbyRestaurants foodName={food.name} category={food.area || food.category} />
 
-        <button className="setup-back" onClick={() => navigate('/swipe')}>
-          ← Keep swiping
+        <button type="button" className="setup-back setup-back--with-icon" onClick={() => navigate('/swipe')}>
+          <HiChevronLeft size={18} aria-hidden />
+          Keep swiping
         </button>
       </div>
     </motion.div>

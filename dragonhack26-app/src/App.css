@@ -12,14 +12,21 @@ button { cursor: pointer; }
   color: var(--text);
 }
 
-/* ── Setup / Mode page shell ─────────────────────────────── */
-.setup-page {
+/* ── Page shell (gradient backdrop, centered column) ─────── */
+.setup-page,
+.swipe-page {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 40px 16px 60px;
   gap: 24px;
+  box-sizing: border-box;
+}
+
+.swipe-page {
+  overflow-x: hidden;
+  user-select: none;
 }
 
 /* ── Header ───────────────────────────────────────────────── */
@@ -42,7 +49,7 @@ button { cursor: pointer; }
 }
 
 .setup-subtitle {
-  color: var(--text);
+  color: var(--text-light);
   font-size: 1rem;
   margin: 0;
 }
@@ -59,6 +66,11 @@ button { cursor: pointer; }
   flex-direction: column;
   gap: 28px;
   box-shadow: var(--shadow);
+}
+
+.setup-card--message {
+  align-items: center;
+  text-align: center;
 }
 
 /* ── Section ──────────────────────────────────────────────── */
@@ -156,9 +168,81 @@ button { cursor: pointer; }
   font-weight: 600;
 }
 
-.chip__emoji {
+.chip__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chip__icon svg {
+  display: block;
+}
+
+.setup-logo--icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-h);
+}
+
+.setup-logo--icon svg {
+  display: block;
+}
+
+.mode-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.mode-card__icon svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.swipe-loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  color: var(--accent);
+  animation: spin 1.4s linear infinite;
+}
+
+.swipe-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--text-h);
   font-size: 1rem;
-  line-height: 1;
+}
+
+.swipe-header__brand svg {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--accent);
+}
+
+.setup-cta--with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.setup-back--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lobby-waiting-spinner {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--accent);
+  animation: spin 1.4s linear infinite;
 }
 
 .chip--dislike {
@@ -172,6 +256,12 @@ button { cursor: pointer; }
 .chip--dislike:hover {
   background: rgba(239, 68, 68, 0.15);
   border-color: #ef4444;
+}
+
+.chip--dislike-remove {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* ── Dislike input row ────────────────────────────────────── */
@@ -200,6 +290,12 @@ button { cursor: pointer; }
 .dislike-add-btn:hover:not(:disabled) {
   background: var(--accent);
   color: #fff;
+}
+
+.dislike-add-btn--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .dislike-add-btn:disabled {
@@ -255,13 +351,9 @@ button { cursor: pointer; }
 .mode-card:hover {
   border-color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px -4px rgba(170, 59, 255, 0.18);
+  box-shadow: 0 12px 28px -4px rgba(30, 27, 23, 0.18);
 }
 
-.mode-card__emoji {
-  font-size: 2.4rem;
-  line-height: 1;
-}
 
 .mode-card__title {
   font-size: 1.25rem;
@@ -288,23 +380,13 @@ button { cursor: pointer; }
 
 .setup-back:hover {
   color: var(--text-h);
-  background: var(--code-bg);
+  
 }
 
 /* ── Swipe page ───────────────────────────────────────────── */
-.swipe-page {
-  display: flex;
-  flex-direction: column;
-  height: 100svh;
-  overflow: hidden;
-  user-select: none;
-}
-
 .swipe-page--center {
-  align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 24px;
+  gap: 16px;
   text-align: center;
 }
 
@@ -314,6 +396,9 @@ button { cursor: pointer; }
   justify-content: space-between;
   padding: 12px 16px;
   flex-shrink: 0;
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
 }
 
 .swipe-header__logo {
@@ -328,16 +413,35 @@ button { cursor: pointer; }
 }
 
 /* ── Card area ────────────────────────────────────────────── */
-.swipe-card-area {
-  flex: 1;
+.swipe-card-stack {
   position: relative;
+  flex: 1;
+  min-height: min(72vh, 540px);
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.swipe-card-area {
+  width: 100%;
+  max-width: 480px;
+  flex: 1;
   min-height: 0;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 /* ── Swipe card ───────────────────────────────────────────── */
+
 .swipe-card {
   position: absolute;
   width: min(88vw, 380px);
@@ -347,6 +451,7 @@ button { cursor: pointer; }
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   background: #111;
   touch-action: none;
+
 }
 
 .swipe-card__img {
@@ -404,6 +509,26 @@ button { cursor: pointer; }
   margin: 6px 0 0;
 }
 
+.swipe-card__hint--icons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px 6px;
+}
+
+.swipe-card__hint-icon {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.swipe-card__hint-sep {
+  opacity: 0.6;
+  padding: 0 2px;
+}
+
 /* ── Like / Skip labels ───────────────────────────────────── */
 .swipe-label {
   position: absolute;
@@ -415,6 +540,15 @@ button { cursor: pointer; }
   border: 3px solid;
   letter-spacing: 1px;
   pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swipe-label svg {
+  flex-shrink: 0;
+  width: 1.35rem;
+  height: 1.35rem;
 }
 
 .swipe-label--like {
@@ -583,22 +717,34 @@ button { cursor: pointer; }
 
 .detail-close:hover { background: var(--border); }
 
+.detail-close--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 /* ── Result page ──────────────────────────────────────────── */
 .result-page {
   min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  padding: 40px 16px 60px;
+  box-sizing: border-box;
 }
 
 .result-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
 }
 
 .result-match-badge {
@@ -610,6 +756,12 @@ button { cursor: pointer; }
   border-radius: 999px;
   padding: 6px 18px;
   letter-spacing: 0.3px;
+}
+
+.result-match-badge.result-match-badge-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .result-img {
@@ -644,7 +796,10 @@ button { cursor: pointer; }
 }
 
 .result-link-btn {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   padding: 14px;
   border-radius: 10px;
@@ -670,6 +825,7 @@ button { cursor: pointer; }
 }
 
 .result-link-btn--yt:hover { opacity: 0.88; }
+
 
 /* ── PC drag cursor ───────────────────────────────────────── */
 .swipe-card--draggable { cursor: grab; }
@@ -779,8 +935,19 @@ button { cursor: pointer; }
   text-align: center;
   font-size: 0.78rem;
   color: var(--text);
-  padding: 0 24px 6px;
+  padding: 0 12px 6px;
   flex-shrink: 0;
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
+}
+
+.multi-match-hint.multi-match-hint-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 /* ── Preference groups ────────────────────────────────────── */
@@ -821,6 +988,13 @@ button { cursor: pointer; }
 .nearby-btn:hover {
   border-color: var(--accent);
   background: var(--accent-bg);
+}
+
+.nearby-btn--with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .nearby-loading {
